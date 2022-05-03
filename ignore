@@ -1,0 +1,130 @@
+# Modify this code to update the DB schema diagram.
+# To reset the sample schema, replace everything with
+# two dots ('..' - without quotes).
+
+User as us
+-
+userId PK int
+email string
+password string
+salt string
+creationDate date
+adSubscription boolean
+lastUpdate date
+role string
+
+
+
+
+Customer as cus
+-
+customerId PK int
+userId NULL int FK >- us.userId
+firstName string
+lastName string
+phoneNumber string
+birthDate date
+email string
+creationDate date
+
+CustomerAddress as cadd
+-
+id PK id
+customerId int FK >- cus.customerId
+state varchar(255)
+city varchar(255)
+address text
+locationReference varchar(255)
+coordinates point
+lastUpdate date
+
+
+Store as st
+---
+storeId PK int
+state string
+city string
+address string
+locationReference varchar(255)
+phoneNumber string
+isDeliveryAllowed boolean
+isPickupAllowed boolean
+isSchedulingAllowed boolean
+isProductException boolean
+
+
+StoreProducts as sp
+--
+storeId int FK >- st.storeId
+productId int FK >- p.productId
+stock int
+available boolean
+
+Schedule
+-
+scheduleId PK int
+storeId int FK >- st.storeId
+dayOfWeek int
+OpenTime date
+CloseTime date
+
+ExceptionSchedule
+-
+scheduleId PK int
+storeId int FK >- st.storeId
+OverrideStartDate date
+OverrideEndtDate date
+dayOfWeek int
+AltOpenTime date
+AltCloseTime date
+Closed boolean
+
+
+Ticket as tkt
+--
+ticketId PK int
+customerId int FK >- cus.customerId
+customerAddressId int FK >- cadd.id 
+couponId NULL string
+totalAmount money
+status string
+storeId FK
+
+
+Order
+----
+orderId PK int
+ticketId int FK >- tkt.ticketId
+totalAmount money
+productId int FK >- p.productId
+quantity int
+portionName varchar(255)
+orderTags jsonb 
+orderStatusId int FK >- os.orderStatusId
+
+
+
+Product as p 
+------------
+productId PK int
+name varchar(200) UNIQUE # Field documentation comment 3
+description text
+price money
+categoryId int FK >- ctg.categoryId
+lastUpdate
+portions jsonb
+tags jsonb
+
+OrderStatus as os
+----
+orderStatusId PK int
+name UNIQUE string
+
+
+Category as ctg
+-
+categoryId PK int
+name varchar(255)
+description text
+imageUrl varchar(255)
+lastUpdate timestamp
