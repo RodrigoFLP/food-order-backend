@@ -1,4 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateAddressDto } from '../dto/create-address.dto';
+import { UpdateAddressDto } from '../dto/update-address.dto';
+import { Address } from '../entities/address.entity';
+import { Customer } from '../entities/customer.entity';
 
 @Injectable()
-export class AddressesService {}
+export class AddressesService {
+  constructor(
+    @InjectRepository(Address) private addressRepository: Repository<Address>,
+  ) {}
+
+  create(data: CreateAddressDto, customer: Customer) {
+    const newAddress = this.addressRepository.create(data);
+    newAddress.customer = customer;
+    return this.addressRepository.save(newAddress);
+  }
+
+  findAll() {
+    return this.addressRepository.find({ relations: ['customer'] });
+  }
+
+  findOne(id: number) {
+    return `This action returns a #id address`;
+  }
+
+  async update(id: number, data: UpdateAddressDto) {
+    const updatedAddress = await this.addressRepository.findOne(id);
+
+    this.addressRepository.merge(updatedAddress, data);
+
+    return this.addressRepository.save(updatedAddress);
+  }
+
+  remove(id: number) {
+    return this.addressRepository.delete(id);
+  }
+}

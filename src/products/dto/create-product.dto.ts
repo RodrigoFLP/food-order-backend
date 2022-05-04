@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Timestamp } from 'typeorm';
+import { PrimaryColumn, Timestamp } from 'typeorm';
 
 export class Portions {
   @IsNumber()
@@ -43,9 +43,9 @@ export class Tags {
 }
 
 export class CreateProductDto {
-  @IsOptional()
+  @PrimaryColumn()
   @IsNumber()
-  id?: number;
+  id: number;
 
   @IsString()
   name: string;
@@ -55,6 +55,7 @@ export class CreateProductDto {
 
   @IsUrl()
   @IsString()
+  @IsOptional()
   image: string;
 
   @IsNumber()

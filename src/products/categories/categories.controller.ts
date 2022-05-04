@@ -1,28 +1,27 @@
+import { Body } from '@nestjs/common';
 import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category } from '../entities/category.entity';
+import { CreateCategoryDto } from '../dto/create-category.dto';
+
+import { CategoriesService } from './categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
-  ) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
   findAll() {
-    return 'return all categories'; //TODO: return
+    return this.categoriesService.findAll();
   }
 
   @Post()
-  create() {
-    return 'create new category'; //TODO: create category
+  create(@Body() data: CreateCategoryDto) {
+    console.log(data);
+    return this.categoriesService.create(data);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return 'this.productsService.findOne(+id);';
+    return this.categoriesService.findOne(+id);
   }
 
   @Patch(':id')

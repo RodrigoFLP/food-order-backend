@@ -1,7 +1,6 @@
 import { Timestamp } from 'typeorm';
 
 export class CreateTicketDto {
-  id: number;
   customerId: number;
   customerAddressId: number;
   couponId?: string;

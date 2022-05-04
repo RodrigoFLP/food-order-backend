@@ -1,9 +1,6 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   name: string;
 

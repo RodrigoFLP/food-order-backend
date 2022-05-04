@@ -32,7 +32,7 @@ export class User {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz', nullable: true })
   lastLogin: Date;
 
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })

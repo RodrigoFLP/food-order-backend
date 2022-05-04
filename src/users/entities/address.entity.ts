@@ -25,7 +25,7 @@ export class Address {
   @Column({ type: 'varchar', length: 255 })
   addressLine1: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   addressLine2: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -40,7 +40,9 @@ export class Address {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => Customer, (customer) => customer.addresses)
+  @ManyToOne(() => Customer, (customer) => customer.addresses, {
+    nullable: false,
+  })
   customer: Customer;
 
   @OneToMany(() => Ticket, (ticket) => ticket.address)
