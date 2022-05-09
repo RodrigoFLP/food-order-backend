@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAddressDto } from '../dto/create-address.dto';
@@ -23,7 +23,11 @@ export class AddressesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #id address`;
+    const address = this.addressRepository.findOne(id);
+    if (!address) {
+      throw new NotFoundException(`address doesn't exist`);
+    }
+    return this.addressRepository.findOne(id);
   }
 
   async update(id: number, data: UpdateAddressDto) {

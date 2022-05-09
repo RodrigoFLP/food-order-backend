@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { Store } from './entities/store.entity';
 
 @Injectable()
 export class StoresService {
+  constructor(
+    @InjectRepository(Store) private readonly storesRepo: Repository<Store>,
+  ) {}
+
   create(createStoreDto: CreateStoreDto) {
-    return 'This action adds a new store';
+    const newStore = this.storesRepo.create(createStoreDto);
+
+    return this.storesRepo.save(newStore);
   }
 
-  findAll() {
-    return `This action returns all stores`;
+  async findAll() {
+    const stores = await this.storesRepo.find();
+    return stores;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const store = await this.storesRepo.findOne(+id, {
+      relations: ['schedules', 'altSchedules'],
+    });
+
+    if (!store) {
+      throw new NotFoundException(`store ${id} doesn't exist`);
+    }
     return `This action returns a #${id} store`;
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`;
+  async update(id: number, changes: UpdateStoreDto) {
+    const store = await this.storesRepo.findOne(+id);
+
+    if (!store) {
+      throw new NotFoundException(`store ${id} doesn't exist`);
+    }
+
+    this.storesRepo.merge(store, changes);
+    return store;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} store`;
+  async remove(id: number) {
+    const store = await this.storesRepo.findOne(+id);
+
+    if (!store) {
+      throw new NotFoundException(`store ${id} doesn't exist`);
+    }
+    return this.storesRepo.delete(+id);
   }
 }

@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +20,12 @@ export class Ticket {
 
   @Column({ type: 'varchar', length: 255 })
   couponId?: string;
+
+  // @Column({ type: 'numeric', precision: 15, scale: 4 })
+  // @Expose()
+  // get totalAmount(): number {
+  //   return 2000;
+  // }
 
   @Column({ type: 'numeric', precision: 15, scale: 4 })
   totalAmount: number;
@@ -47,6 +54,8 @@ export class Ticket {
   @ManyToOne(() => Customer, (customer) => customer.tickets)
   customer: Customer;
 
-  @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket)
+  @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket, {
+    onDelete: 'CASCADE',
+  })
   ticketItems: TicketItem[];
 }

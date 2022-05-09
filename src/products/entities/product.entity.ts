@@ -1,10 +1,10 @@
 import {} from '@nestjs/typeorm';
-import { IsUrl } from 'class-validator';
+import { IsNumber, IsString, IsUrl } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  ManyToMany,
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
@@ -14,7 +14,7 @@ import { Category } from './category.entity';
 
 @Entity()
 export class Product {
-  @PrimaryColumn()
+  @PrimaryColumn({ unique: true })
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
@@ -42,8 +42,8 @@ export class Product {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  category: Category;
+  @ManyToMany(() => Category, (category) => category.products)
+  categories: Category[];
 
   @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket)
   ticketItems: TicketItem[];
@@ -51,8 +51,21 @@ export class Product {
 
 export class Portion {
   id: number;
+  @IsString()
   name: string;
+  @IsNumber()
   price: number;
+  tagGroups: TagGroup[];
+}
+
+export class TagGroup {
+  id: number;
+  name: string;
+  color: string;
+  max: number;
+  min: number;
+  hidden: boolean;
+  tags: Tag[];
 }
 
 export class Tag {

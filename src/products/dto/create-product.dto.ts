@@ -1,16 +1,50 @@
 import {
   ArrayMinSize,
+  ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsDateString,
+  IsInt,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
   IsUrl,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PrimaryColumn, Timestamp } from 'typeorm';
+
+export class TagGroup {
+  @IsNumber()
+  id: number;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  color: string;
+
+  @IsInt()
+  @Min(0)
+  max: number;
+
+  @IsInt()
+  @Min(0)
+  min: number;
+
+  @IsBoolean()
+  hidden: boolean;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(1)
+  @Type(() => Tags)
+  tags: Tags[];
+}
 
 export class Portions {
   @IsNumber()
@@ -22,6 +56,12 @@ export class Portions {
   @IsNumber()
   @IsPositive()
   price: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(0)
+  @Type(() => TagGroup)
+  tagGroups: TagGroup[];
 }
 
 export class Tags {
@@ -58,8 +98,10 @@ export class CreateProductDto {
   @IsOptional()
   image: string;
 
-  @IsNumber()
-  categoryId: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNotEmpty()
+  categoriesId: number[];
 
   @IsNumber()
   price: number;

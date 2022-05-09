@@ -20,10 +20,10 @@ export class Store {
   @Column({ type: 'varchar', length: 255 })
   addressLine1: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   addressLine2: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   addressReference: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -38,7 +38,7 @@ export class Store {
   @Column({ type: 'boolean' })
   isSchedulingEnabled: boolean;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   productException: boolean;
 
   @OneToMany(() => Schedule, (schedule) => schedule.store)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AddressesService } from '../addresses/addresses.service';
@@ -32,7 +32,11 @@ export class CustomersService {
   }
 
   findOne(id: number) {
-    return '';
+    const customer = this.customerRepo.findOne(id);
+    if (!customer) {
+      throw new NotFoundException(`customer doesn't exist`);
+    }
+    return this.customerRepo.findOne(id);
   }
 
   update(id: number, data: UpdateCustomerDto) {

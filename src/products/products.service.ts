@@ -1,24 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CategoriesService } from './categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    private readonly categoriesService: CategoriesService,
+    @InjectRepository(Category)
+    private categoriesRepository: Repository<Category>,
   ) {}
 
   async create(data: CreateProductDto) {
     const newProduct = this.productsRepository.create(data);
 
     //bind category to new product
-    const category = await this.categoriesService.findOne(+data.categoryId);
-    newProduct.category = category;
+    const categories = await this.categoriesRepository.findByIds(
+      data.categoriesId,
+    );
+
+    if (categories.length < 1) {
+      throw new NotFoundException(`categories don't exist`);
+    }
+    newProduct.categories = categories;
 
     return this.productsRepository.save(newProduct);
   }
@@ -27,16 +34,33 @@ export class ProductsService {
     return this.productsRepository.find();
   }
 
-  findOne(id: number) {
-    const product = this.productsRepository.findOne(id);
+  async findOne(id: number) {
+    const product = await this.productsRepository.findOne(id);
     if (!product) {
-      throw new NotFoundException(`Product ${id} doesn't exist`);
+      console.log('not found');
+      throw new NotFoundException(`Product with id ${id} doesn't exist`);
     }
+
     return product;
   }
 
   async update(id: number, changes: UpdateProductDto) {
     const product = await this.productsRepository.findOne(id);
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} doesn't exist`);
+    }
+
+    if (changes.categoriesId) {
+      const categories = await this.categoriesRepository.findByIds(
+        changes.categoriesId,
+      );
+
+      if (categories.length < 1) {
+        throw new NotFoundException(`categories don't exist`);
+      }
+      product.categories = categories;
+    }
     this.productsRepository.merge(product, changes);
 
     return this.productsRepository.save(product);

@@ -11,6 +11,7 @@ import { DatabaseModule } from './database/database.module';
 
 import { enviroments } from './../enviroments';
 import { TicketsModule } from './tickets/tickets.module';
+import { AuthModule } from './auth/auth.module';
 import config from '../config';
 
 @Module({
@@ -20,6 +21,8 @@ import config from '../config';
       isGlobal: true,
       load: [config],
       validationSchema: Joi.object({
+        JWT_SECRET: Joi.string().required(),
+        API_KEY: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
@@ -32,6 +35,7 @@ import config from '../config';
     ProductsModule,
     DatabaseModule,
     TicketsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
