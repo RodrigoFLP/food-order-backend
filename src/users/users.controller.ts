@@ -19,13 +19,14 @@ import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/models/roles.model';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseInterceptors(ClassSerializerInterceptor)
-@UseGuards(ApiKeyGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

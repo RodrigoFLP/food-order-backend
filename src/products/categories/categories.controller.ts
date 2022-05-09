@@ -33,6 +33,7 @@ export class CategoriesController {
     return this.categoriesService.create(data);
   }
 
+  @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {

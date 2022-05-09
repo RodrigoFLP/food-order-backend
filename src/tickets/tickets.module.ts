@@ -17,5 +17,6 @@ import { ProductsModule } from '../products/products.module';
   ],
   controllers: [TicketsController, TicketItemsController],
   providers: [TicketsService, TicketItemsService],
+  exports: [TicketsService],
 })
 export class TicketsModule {}

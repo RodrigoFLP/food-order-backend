@@ -12,6 +12,9 @@ import { DatabaseModule } from './database/database.module';
 import { enviroments } from './../enviroments';
 import { TicketsModule } from './tickets/tickets.module';
 import { AuthModule } from './auth/auth.module';
+import { ProfileController } from './profile/profile.controller';
+import { ProfileModule } from './profile/profile.module';
+
 import config from '../config';
 
 @Module({
@@ -36,8 +39,9 @@ import config from '../config';
     DatabaseModule,
     TicketsModule,
     AuthModule,
+    ProfileModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProfileController],
   providers: [AppService],
 })
 export class AppModule {}

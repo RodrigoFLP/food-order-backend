@@ -112,4 +112,12 @@ export class TicketsService {
   remove(id: number) {
     return this.ticketsRepo.delete(id);
   }
+
+  ordersByCustomer(customerId: number) {
+    return this.ticketsRepo.find({
+      where: {
+        customer: customerId,
+      },
+    });
+  }
 }

@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Customer } from './entities/customer.entity';
 import { User } from './entities/user.entity';
 import { Address } from './entities/address.entity';
+import { TicketsModule } from '../tickets/tickets.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Customer, Address])],
