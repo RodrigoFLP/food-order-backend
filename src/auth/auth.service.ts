@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -15,6 +15,9 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`user ${email} doesn't exist`);
+    }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (user && isMatch) {
@@ -25,9 +28,17 @@ export class AuthService {
 
   generateJWT(user: User) {
     const payload: PayloadToken = { sub: user.id, role: user.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user,
-    };
+
+    const token = this.jwtService.sign(payload);
+
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=864000`;
+    // return {
+    //   access_token: this.jwtService.sign(payload),
+    //   user,
+    // };
+  }
+
+  getCookieForLogOut() {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

@@ -9,6 +9,7 @@ import { TicketsService } from '../tickets/tickets.service';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProfileController {
   constructor(private ticketsServices: TicketsService) {}
+
   @Get('orders')
   async getOrders(@Req() req: Request) {
     const user = req.user as PayloadToken;

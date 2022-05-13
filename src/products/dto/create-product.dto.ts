@@ -8,7 +8,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   IsUrl,
   Min,
@@ -54,7 +53,7 @@ export class Portions {
   name: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   price: number;
 
   @IsArray()
@@ -75,7 +74,7 @@ export class Tags {
   value: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   price: number;
 
   @IsNumber()
@@ -104,6 +103,7 @@ export class CreateProductDto {
   categoriesId: number[];
 
   @IsNumber()
+  @Min(0)
   price: number;
 
   @IsDateString()
