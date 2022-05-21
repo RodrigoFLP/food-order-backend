@@ -41,7 +41,12 @@ export class TicketsService {
 
     // add ticketItems and bind each one to ticket
     for await (const item of data.ticketItems) {
-      this.ticketItemsRepo.create(item);
+      const serializedItem = {
+        ...item,
+        tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
+      };
+      this.ticketItemsRepo.create(serializedItem);
+
       const product = await this.productService.findOne(item.productId);
 
       const newTicketItem = this.ticketItemsRepo.create(item);
@@ -58,7 +63,7 @@ export class TicketsService {
 
       newTicketItem.totalAmount = portion.price;
 
-      for await (const tag of item.tags) {
+      for await (const tag of serializedItem.tags) {
         const tagGroup = portion.tagGroups.find(
           (tagGroup) => tagGroup.name === tag.name,
         );
@@ -113,11 +118,75 @@ export class TicketsService {
     return this.ticketsRepo.delete(id);
   }
 
-  ordersByCustomer(customerId: number) {
-    return this.ticketsRepo.find({
-      where: {
-        customer: customerId,
-      },
-    });
+  async calculatePrice(data: CreateTicketDto) {
+    const newTicket = this.ticketsRepo.create(data);
+
+    let total = 0;
+    const ticketItems = [];
+
+    // add ticketItems and bind each one to ticket
+    for await (const item of data.ticketItems) {
+      const serializedItem = {
+        ...item,
+        tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
+      };
+
+      this.ticketItemsRepo.create(serializedItem);
+
+      const product = await this.productService.findOne(item.productId);
+
+      const newTicketItem = this.ticketItemsRepo.create(item);
+      newTicketItem.product = product;
+      newTicketItem.ticket = newTicket;
+
+      const portion = product.portions.find(
+        (portion) => portion.name === item.portion.name,
+      );
+
+      if (!portion) {
+        throw new NotFoundException(`Portion not found`);
+      }
+
+      newTicketItem.totalAmount = portion.price;
+
+      for await (const tag of serializedItem.tags) {
+        const tagGroup = portion.tagGroups.find(
+          (tagGroup) => tagGroup.name === tag.name,
+        );
+        if (!tagGroup) {
+          throw new NotFoundException(
+            `Portion of ${tag.name} not found in product portions`,
+          );
+        }
+
+        const nTag = tagGroup.tags.find((nTag) => nTag.value === tag.value);
+        if (!nTag) {
+          throw new NotFoundException(
+            `tag ${tag.value} not found in portion tags`,
+          );
+        }
+        newTicketItem.totalAmount =
+          newTicketItem.totalAmount + nTag.price * tag.quantity;
+      }
+
+      newTicketItem.totalAmount = newTicketItem.totalAmount * item.quantity;
+      total = total + newTicketItem.totalAmount;
+
+      ticketItems.push(newTicketItem);
+    }
+
+    newTicket.totalAmount = total;
+
+    return newTicket;
+  }
+
+  async ordersByCustomer(customerId: number) {
+    const ticketWithItemsAndProducts = await this.ticketsRepo
+      .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
+      .innerJoinAndSelect('ticketItems.product', 'product.id')
+      .where('tickets.customerId = :id', { id: customerId })
+      .getMany();
+    return ticketWithItemsAndProducts;
   }
 }

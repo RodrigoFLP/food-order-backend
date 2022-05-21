@@ -8,15 +8,18 @@ import { TicketItemsController } from './ticket-items/ticket-items.controller';
 import { TicketItemsService } from './ticket-items/ticket-items.service';
 import { UsersModule } from '../users/users.module';
 import { ProductsModule } from '../products/products.module';
+import { StatusService } from './status/status.service';
+import { StatusController } from './status/status.controller';
+import { Status } from './entities/status.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Ticket, TicketItem]),
+    TypeOrmModule.forFeature([Ticket, TicketItem, Status]),
     UsersModule,
     ProductsModule,
   ],
-  controllers: [TicketsController, TicketItemsController],
-  providers: [TicketsService, TicketItemsService],
+  controllers: [TicketsController, TicketItemsController, StatusController],
+  providers: [TicketsService, TicketItemsService, StatusService],
   exports: [TicketsService],
 })
 export class TicketsModule {}

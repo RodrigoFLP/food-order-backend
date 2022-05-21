@@ -16,6 +16,7 @@ import { ProfileController } from './profile/profile.controller';
 import { ProfileModule } from './profile/profile.module';
 
 import config from '../config';
+import { CustomersService } from './users/customers/customers.service';
 
 @Module({
   imports: [

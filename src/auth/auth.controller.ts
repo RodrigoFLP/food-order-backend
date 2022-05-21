@@ -12,11 +12,16 @@ import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { PayloadToken } from './models/token.model';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UsersService,
+  ) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
@@ -33,17 +38,24 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post('logout')
-  async logOut(@Req() request: Request, @Res() response: Response) {
-    response.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
-    return response.sendStatus(200);
+  @Get('logout')
+  logOut(@Res({ passthrough: true }) response: Response) {
+    response.cookie('Authentication', '', { httpOnly: true });
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get()
-  authenticate(@Req() request: Request) {
-    const user = request.user as User;
-    return user;
+  @Get('check')
+  async authenticate(@Req() request: Request) {
+    const user = request.user as PayloadToken;
+    const { id, email, role } = await this.userService.findOne(user.sub);
+    return { id, email, role };
+  }
+
+  @UseGuards(AuthGuard('jwtheader'))
+  @Get('checkheader')
+  async authenticateheader(@Req() request: Request) {
+    const user = request.user as PayloadToken;
+    const { id, email, role } = await this.userService.findOne(user.sub);
+    return { id, email, role };
   }
 }

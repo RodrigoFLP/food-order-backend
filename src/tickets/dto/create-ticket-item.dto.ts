@@ -12,8 +12,55 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { PrimaryGeneratedColumn } from 'typeorm';
-import { Portion, Tag } from '../../products/entities/product.entity';
 
+export class Tags {
+  @IsNumber()
+  id: number;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  value: string;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  price: number;
+
+  @IsNumber()
+  @IsOptional()
+  ratio: number;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+export class TagsGroups {
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Tags)
+  tags: Tags[];
+}
+
+export class Portion {
+  @IsNumber()
+  id: number;
+
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  price: number;
+}
 export class CreateTicketItemDto {
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,11 +77,12 @@ export class CreateTicketItemDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => Tags)
-  tags: Tags[];
+  @Type(() => TagsGroups)
+  tagsGroups: TagsGroups[];
 
   @IsNumber()
   @Min(0)
+  @IsOptional()
   totalAmount: number;
 
   @IsInt()
@@ -43,26 +91,4 @@ export class CreateTicketItemDto {
   @IsInt()
   @IsOptional()
   ticketId: number;
-}
-
-export class Tags {
-  @IsNumber()
-  id: number;
-
-  @IsString()
-  name: string;
-
-  @IsString()
-  value: string;
-
-  @IsNumber()
-  @IsPositive()
-  price: number;
-
-  @IsNumber()
-  ratio: number;
-
-  @IsNumber()
-  @IsPositive()
-  quantity: number;
 }

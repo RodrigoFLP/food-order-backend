@@ -26,7 +26,6 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   salt: string;
 
-  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   role: string;
 

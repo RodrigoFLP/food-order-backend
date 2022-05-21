@@ -13,6 +13,7 @@ import { CreateTicketItemDto } from './create-ticket-item.dto';
 
 export class CreateTicketDto {
   @IsInt()
+  @IsOptional()
   customerId: number;
 
   @IsInt()
@@ -23,11 +24,8 @@ export class CreateTicketDto {
   couponId: string;
 
   @IsNumber()
-  totalAmount: number;
-
-  @IsString()
   @IsOptional()
-  status: string;
+  statusId: number;
 
   @IsString()
   orderType: string;

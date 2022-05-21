@@ -26,6 +26,12 @@ export class TicketsController {
     return this.ticketsService.create(createTicketDto);
   }
 
+  @Post('calculate')
+  calculatePrice(@Body() createTicketDto: CreateTicketDto) {
+    console.log(createTicketDto);
+    return this.ticketsService.calculatePrice(createTicketDto);
+  }
+
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get()
   findAll() {

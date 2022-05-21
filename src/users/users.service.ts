@@ -60,6 +60,21 @@ export class UsersService {
     return user;
   }
 
+  async findCustomer(userId: number) {
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.customer', 'customer')
+      .innerJoinAndSelect('customer.addresses', 'addresses')
+      .where('users.id = :id', { id: userId })
+      .getOne();
+
+    if (!user) {
+      throw new NotFoundException(`customer for ${userId} doesn't exist`);
+    }
+
+    return user.customer;
+  }
+
   async update(id: number, changes: UpdateUserDto) {
     const user = await this.findOne(id);
 

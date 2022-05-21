@@ -31,14 +31,10 @@ export class AuthService {
 
     const token = this.jwtService.sign(payload);
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=864000`;
-    // return {
-    //   access_token: this.jwtService.sign(payload),
-    //   user,
-    // };
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=864000;`;
   }
 
   getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0;`;
   }
 }

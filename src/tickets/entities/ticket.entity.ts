@@ -1,4 +1,3 @@
-import { Expose } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +10,7 @@ import {
 import { Store } from '../../stores/entities/store.entity';
 import { Address } from '../../users/entities/address.entity';
 import { Customer } from '../../users/entities/customer.entity';
+import { Status } from './status.entity';
 import { TicketItem } from './ticketItem.entity';
 
 @Entity()
@@ -29,9 +29,6 @@ export class Ticket {
 
   @Column({ type: 'numeric', precision: 15, scale: 4 })
   totalAmount: number;
-
-  @Column({ type: 'varchar', length: 255 })
-  status: string;
 
   @Column({ type: 'varchar', length: 255 })
   orderType: string;
@@ -53,6 +50,9 @@ export class Ticket {
 
   @ManyToOne(() => Customer, (customer) => customer.tickets)
   customer: Customer;
+
+  @ManyToOne(() => Status, (status) => status.id, { nullable: true })
+  status: Status;
 
   @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket, {
     onDelete: 'CASCADE',
