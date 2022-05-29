@@ -15,10 +15,10 @@ import { TicketItem } from './ticketItem.entity';
 
 @Entity()
 export class Ticket {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   couponId?: string;
 
   // @Column({ type: 'numeric', precision: 15, scale: 4 })

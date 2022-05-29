@@ -36,7 +36,7 @@ export class UsersService {
       newUser.customer = customer;
     }
 
-    newUser.role = 'customer';
+    newUser.role = 'admin';
 
     return this.userRepository.save(newUser);
   }

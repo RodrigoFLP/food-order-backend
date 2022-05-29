@@ -11,12 +11,14 @@ import { ProductsModule } from '../products/products.module';
 import { StatusService } from './status/status.service';
 import { StatusController } from './status/status.controller';
 import { Status } from './entities/status.entity';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Ticket, TicketItem, Status]),
     UsersModule,
     ProductsModule,
+    PaymentsModule,
   ],
   controllers: [TicketsController, TicketItemsController, StatusController],
   providers: [TicketsService, TicketItemsService, StatusService],

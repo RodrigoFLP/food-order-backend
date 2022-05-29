@@ -33,7 +33,7 @@ export class Tags {
   ratio: number;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   quantity: number;
 }
 
@@ -42,7 +42,7 @@ export class TagsGroups {
   name: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   quantity: number;
 
   @IsArray()

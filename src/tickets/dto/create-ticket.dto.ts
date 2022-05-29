@@ -13,10 +13,6 @@ import { CreateTicketItemDto } from './create-ticket-item.dto';
 
 export class CreateTicketDto {
   @IsInt()
-  @IsOptional()
-  customerId: number;
-
-  @IsInt()
   customerAddressId: number;
 
   @IsInt()

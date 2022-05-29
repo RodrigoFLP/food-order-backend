@@ -14,9 +14,9 @@ import { TicketsModule } from './tickets/tickets.module';
 import { AuthModule } from './auth/auth.module';
 import { ProfileController } from './profile/profile.controller';
 import { ProfileModule } from './profile/profile.module';
+import { PaymentsModule } from './payments/payments.module';
 
 import config from '../config';
-import { CustomersService } from './users/customers/customers.service';
 
 @Module({
   imports: [
@@ -41,6 +41,7 @@ import { CustomersService } from './users/customers/customers.service';
     TicketsModule,
     AuthModule,
     ProfileModule,
+    PaymentsModule,
   ],
   controllers: [AppController, ProfileController],
   providers: [AppService],

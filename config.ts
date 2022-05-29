@@ -4,6 +4,10 @@ export default registerAs('config', () => {
   return {
     apiKey: process.env.API_KEY,
     jwtSecret: process.env.JWT_SECRET,
+    wompi: {
+      appId: process.env.WOMPI_APP_ID,
+      apiSecret: process.env.WOMPI_API_SECRET,
+    },
     postgres: {
       dbName: process.env.POSTGRES_DB,
       port: parseInt(process.env.POSTGRES_PORT, 10),

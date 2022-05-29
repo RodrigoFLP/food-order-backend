@@ -20,10 +20,15 @@ export class TicketsService {
     private readonly productService: ProductsService,
   ) {}
 
-  async create(data: CreateTicketDto) {
+  async create(data: CreateTicketDto, customerId: number) {
     //create Ticket
-    const newTicket = this.ticketsRepo.create(data);
-    const customer = await this.customerService.findOne(data.customerId);
+
+    const newTicket = this.ticketsRepo.create({ ...data, totalAmount: 0 });
+
+    let total = 0;
+    const ticketItems = [];
+
+    const customer = await this.customerService.findOne(customerId); //todo: change how customer id is found
     if (!customer) {
       throw new NotFoundException(`user doesn't exist`);
     }
@@ -37,14 +42,13 @@ export class TicketsService {
 
     await this.ticketsRepo.save(newTicket);
 
-    let total = 0;
-
     // add ticketItems and bind each one to ticket
     for await (const item of data.ticketItems) {
       const serializedItem = {
         ...item,
         tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
       };
+
       this.ticketItemsRepo.create(serializedItem);
 
       const product = await this.productService.findOne(item.productId);
@@ -63,34 +67,35 @@ export class TicketsService {
 
       newTicketItem.totalAmount = portion.price;
 
-      for await (const tag of serializedItem.tags) {
-        const tagGroup = portion.tagGroups.find(
-          (tagGroup) => tagGroup.name === tag.name,
-        );
-        if (!tagGroup) {
-          throw new NotFoundException(
-            `Portion of ${tag.name} not found in product portions`,
+      if (serializedItem.tags.length !== 0) {
+        for await (const tag of serializedItem.tags) {
+          const tagGroup = portion.tagGroups.find(
+            (tagGroup) => tagGroup.name === tag.name,
           );
+          if (!tagGroup) {
+            throw new NotFoundException(
+              `Portion of ${tag.name} not found in product portions`,
+            );
+          }
+
+          const nTag = tagGroup.tags.find((nTag) => nTag.value === tag.value);
+          if (!nTag) {
+            throw new NotFoundException(
+              `tag ${tag.value} not found in portion tags`,
+            );
+          }
+          newTicketItem.totalAmount =
+            newTicketItem.totalAmount + nTag.price * tag.quantity;
         }
-        console.log(tagGroup.tags);
-        const nTag = tagGroup.tags.find((nTag) => nTag.value === tag.value);
-        if (!nTag) {
-          throw new NotFoundException(
-            `tag ${tag.value} not found in portion tags`,
-          );
-        }
-        newTicketItem.totalAmount =
-          newTicketItem.totalAmount + nTag.price * tag.quantity;
       }
 
       newTicketItem.totalAmount = newTicketItem.totalAmount * item.quantity;
       total = total + newTicketItem.totalAmount;
-      console.log(total);
       this.ticketItemsRepo.save(newTicketItem);
-    }
 
+      ticketItems.push(newTicketItem);
+    }
     newTicket.totalAmount = total;
-    console.log(newTicket.totalAmount);
 
     await this.ticketsRepo.save(newTicket);
     return newTicket;
@@ -149,24 +154,26 @@ export class TicketsService {
 
       newTicketItem.totalAmount = portion.price;
 
-      for await (const tag of serializedItem.tags) {
-        const tagGroup = portion.tagGroups.find(
-          (tagGroup) => tagGroup.name === tag.name,
-        );
-        if (!tagGroup) {
-          throw new NotFoundException(
-            `Portion of ${tag.name} not found in product portions`,
+      if (serializedItem.tags.length !== 0) {
+        for await (const tag of serializedItem.tags) {
+          const tagGroup = portion.tagGroups.find(
+            (tagGroup) => tagGroup.name === tag.name,
           );
-        }
+          if (!tagGroup) {
+            throw new NotFoundException(
+              `Portion of ${tag.name} not found in product portions`,
+            );
+          }
 
-        const nTag = tagGroup.tags.find((nTag) => nTag.value === tag.value);
-        if (!nTag) {
-          throw new NotFoundException(
-            `tag ${tag.value} not found in portion tags`,
-          );
+          const nTag = tagGroup.tags.find((nTag) => nTag.value === tag.value);
+          if (!nTag) {
+            throw new NotFoundException(
+              `tag ${tag.value} not found in portion tags`,
+            );
+          }
+          newTicketItem.totalAmount =
+            newTicketItem.totalAmount + nTag.price * tag.quantity;
         }
-        newTicketItem.totalAmount =
-          newTicketItem.totalAmount + nTag.price * tag.quantity;
       }
 
       newTicketItem.totalAmount = newTicketItem.totalAmount * item.quantity;

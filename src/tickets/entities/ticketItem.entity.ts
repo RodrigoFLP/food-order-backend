@@ -1,4 +1,3 @@
-import { Expose } from 'class-transformer';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Portion, Product, Tag } from '../../products/entities/product.entity';
 import { Ticket } from './ticket.entity';
@@ -14,17 +13,8 @@ export class TicketItem {
   @Column({ type: 'jsonb' })
   portion: Portion;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   tags: Tag[];
-
-  // @Expose()
-  // get totalAmount(): number {
-  //   console.log(this.product);
-  // const portion = this.product.portions.find(
-  //   (portion) => portion.name === this.portion.name,
-  // );
-  //   return portion.price * this.quantity;
-  // }
 
   @Column({ type: 'numeric', precision: 15, scale: 4 })
   totalAmount: number;
