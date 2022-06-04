@@ -16,11 +16,18 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/models/roles.model';
 import { Public } from '../auth/decorators/public.decorator';
+import { AreasService } from './areas/areas.service';
+import { CoordinatesService } from './coordinates/coordinates.service';
+import { CreateAreaDto } from './dto/create-area.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('stores')
 export class StoresController {
-  constructor(private readonly storesService: StoresService) {}
+  constructor(
+    private readonly storesService: StoresService,
+    private readonly areasService: AreasService,
+    private readonly coordinatesService: CoordinatesService,
+  ) {}
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Post()
@@ -50,5 +57,29 @@ export class StoresController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.storesService.remove(+id);
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Post(':id/area')
+  async createArea(
+    @Param('id') id: string,
+    @Body() createAreaDto: CreateAreaDto,
+  ) {
+    const store = await this.storesService.findOne(+id);
+    const newArea = await this.areasService.create(store);
+
+    for await (const coordinate of createAreaDto.coordinates) {
+      await this.coordinatesService.create(newArea, coordinate);
+    }
+
+    return newArea;
+  }
+
+  @Public()
+  @Get(':id/area')
+  async getArea(@Param('id') id: string) {
+    const store = await this.areasService.findByStoreId(+id);
+
+    return store;
   }
 }

@@ -24,13 +24,13 @@ export class StoresService {
 
   async findOne(id: number) {
     const store = await this.storesRepo.findOne(+id, {
-      relations: ['schedules', 'altSchedules'],
+      relations: ['schedules', 'altSchedules', 'areas'],
     });
 
     if (!store) {
       throw new NotFoundException(`store ${id} doesn't exist`);
     }
-    return `This action returns a #${id} store`;
+    return store;
   }
 
   async update(id: number, changes: UpdateStoreDto) {

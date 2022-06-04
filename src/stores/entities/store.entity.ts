@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { AltSchedule } from './alt-schedule.entity';
+import { Area } from './area.entity';
 import { Schedule } from './schedule.entity';
 
 @Entity()
@@ -49,4 +50,7 @@ export class Store {
 
   @OneToMany(() => Ticket, (ticket) => ticket.address)
   tickets: Ticket[];
+
+  @OneToMany(() => Area, (area) => area.store)
+  areas: Area[];
 }

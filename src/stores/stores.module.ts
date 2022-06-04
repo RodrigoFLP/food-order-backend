@@ -10,10 +10,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
 import { Schedule } from './entities/schedule.entity';
 import { AltSchedule } from './entities/alt-schedule.entity';
+import { AreasService } from './areas/areas.service';
+import { CoordinatesService } from './coordinates/coordinates.service';
+import { Area } from './entities/area.entity';
+import { Coordinate } from './entities/coordinate.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Store, Schedule, AltSchedule])],
+  imports: [
+    TypeOrmModule.forFeature([Store, Schedule, AltSchedule, Area, Coordinate]),
+  ],
   controllers: [StoresController, SchedulesController, AltSchedulesController],
-  providers: [StoresService, AltSchedulesService, SchedulesService],
+  providers: [
+    StoresService,
+    AltSchedulesService,
+    SchedulesService,
+    AreasService,
+    CoordinatesService,
+  ],
 })
 export class StoresModule {}

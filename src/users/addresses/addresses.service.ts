@@ -41,4 +41,8 @@ export class AddressesService {
   remove(id: number) {
     return this.addressRepository.delete(id);
   }
+
+  findManyByCustomerId(id: number) {
+    return this.addressRepository.find({ where: { customer: id } });
+  }
 }
