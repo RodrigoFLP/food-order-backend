@@ -44,4 +44,7 @@ export class User {
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   @JoinColumn()
   customer: Customer;
+
+  @Column({ default: false })
+  isEmailConfirmed: boolean;
 }

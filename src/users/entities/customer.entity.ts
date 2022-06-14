@@ -38,7 +38,7 @@ export class Customer {
   @Column({ type: 'timestamptz', nullable: true })
   lastLogin: Date;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: 'false' })
   receiveAds: boolean;
 
   @OneToOne(() => User, (user) => user.customer, { nullable: true })
