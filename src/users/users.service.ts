@@ -36,7 +36,7 @@ export class UsersService {
       newUser.customer = customer;
     }
 
-    newUser.role = 'admin';
+    newUser.role = 'client';
 
     return this.userRepository.save(newUser);
   }
@@ -46,7 +46,10 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['customer'],
+    });
     return user;
   }
 
@@ -72,7 +75,7 @@ export class UsersService {
       throw new NotFoundException(`customer for ${userId} doesn't exist`);
     }
 
-    return user.customer;
+    return { ...user.customer, email: user.email };
   }
 
   async update(id: number, changes: UpdateUserDto) {
@@ -85,5 +88,14 @@ export class UsersService {
 
   remove(id: number) {
     return this.userRepository.delete(id);
+  }
+
+  async markEmailAsConfirmed(email: string) {
+    return this.userRepository.update(
+      { email },
+      {
+        isEmailConfirmed: true,
+      },
+    );
   }
 }

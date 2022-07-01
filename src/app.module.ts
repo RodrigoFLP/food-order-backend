@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProfileController } from './profile/profile.controller';
 import { ProfileModule } from './profile/profile.module';
 import { PaymentsModule } from './payments/payments.module';
+import { EmailModule } from './email/email.module';
 
 import config from '../config';
 
@@ -25,6 +26,12 @@ import config from '../config';
       isGlobal: true,
       load: [config],
       validationSchema: Joi.object({
+        JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
+        JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        EMAIL_CONFIRMATION_URL: Joi.string().required(),
+        EMAIL_SERVICE: Joi.string().required(),
+        EMAIL_USER: Joi.string().required(),
+        EMAIL_PASSWORD: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         API_KEY: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
@@ -42,6 +49,7 @@ import config from '../config';
     AuthModule,
     ProfileModule,
     PaymentsModule,
+    EmailModule,
   ],
   controllers: [AppController, ProfileController],
   providers: [AppService],

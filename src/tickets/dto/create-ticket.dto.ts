@@ -3,17 +3,19 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDateString,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
-  IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { CreateTicketItemDto } from './create-ticket-item.dto';
 
 export class CreateTicketDto {
-  @IsInt()
-  customerAddressId: number;
+  @IsUUID()
+  @IsOptional()
+  customerAddressId: string | null;
 
   @IsInt()
   @IsOptional()
@@ -23,7 +25,7 @@ export class CreateTicketDto {
   @IsOptional()
   statusId: number;
 
-  @IsString()
+  @IsEnum(['delivery', 'pickup'])
   orderType: string;
 
   @IsDateString()

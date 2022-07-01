@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UUIDVersion } from 'class-validator';
 import { Repository } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { AddressesService } from '../users/addresses/addresses.service';
@@ -39,6 +40,7 @@ export class TicketsService {
 
     newTicket.customer = customer;
     newTicket.address = address;
+    newTicket.status = 'unpaid';
 
     await this.ticketsRepo.save(newTicket);
 
@@ -56,6 +58,9 @@ export class TicketsService {
       const newTicketItem = this.ticketItemsRepo.create(item);
       newTicketItem.product = product;
       newTicketItem.ticket = newTicket;
+      newTicketItem.tags = serializedItem.tags;
+
+      console.log(newTicketItem.tags);
 
       const portion = product.portions.find(
         (portion) => portion.name === item.portion.name,
@@ -115,6 +120,14 @@ export class TicketsService {
     return ticketWithItemsAndProducts;
   }
 
+  async confirmPayment(id: string) {
+    const ticket = await this.ticketsRepo.findOne(id);
+
+    ticket.status = 'placed';
+
+    return this.ticketsRepo.save(ticket);
+  }
+
   update(id: number, updateTicketDto: UpdateTicketDto) {
     return `This action updates a #${id} ticket`;
   }
@@ -143,6 +156,8 @@ export class TicketsService {
       const newTicketItem = this.ticketItemsRepo.create(item);
       newTicketItem.product = product;
       newTicketItem.ticket = newTicket;
+
+      newTicketItem.tags = serializedItem.tags;
 
       const portion = product.portions.find(
         (portion) => portion.name === item.portion.name,
@@ -194,6 +209,17 @@ export class TicketsService {
       .innerJoinAndSelect('ticketItems.product', 'product.id')
       .where('tickets.customerId = :id', { id: customerId })
       .getMany();
+    return ticketWithItemsAndProducts;
+  }
+
+  async orderByCustomer(customerId: number, ticketId: string) {
+    const ticketWithItemsAndProducts = await this.ticketsRepo
+      .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
+      .innerJoinAndSelect('ticketItems.product', 'product.id')
+      .where('tickets.customerId = :id', { id: customerId })
+      .andWhere('tickets.id = :ticketId', { ticketId: ticketId })
+      .getOne();
     return ticketWithItemsAndProducts;
   }
 }

@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -9,6 +19,9 @@ import { UsersService } from '../users/users.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { AddressesService } from '../users/addresses/addresses.service';
 import { CreateAddressDto } from '../users/dto/create-address.dto';
+import { UpdateAddressDto } from '../users/dto/update-address.dto';
+import { IsUUID, UUIDVersion } from 'class-validator';
+import { OrderIdDto } from '../tickets/dto/order-id.dto';
 
 @Controller('profile')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -19,13 +32,6 @@ export class ProfileController {
     private usersService: UsersService,
     private addressService: AddressesService,
   ) {}
-
-  @Get('orders')
-  async getOrders(@Req() req: Request) {
-    const user = req.user as PayloadToken;
-
-    return this.ticketsService.ordersByCustomer(user.sub);
-  }
 
   @Get()
   async getProfile(@Req() req: Request) {
@@ -53,8 +59,44 @@ export class ProfileController {
     const user = req.user as PayloadToken;
     const customer = await this.usersService.findCustomer(user.sub);
 
+    if (customer.addresses.length >= 3) {
+      return new ForbiddenException(new Error('only 3 addresses allowed'));
+    }
+
     const newAddress = await this.addressService.create(address, customer);
 
     return newAddress;
+  }
+
+  @Patch('address/:id')
+  async update(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateAddressDto: UpdateAddressDto,
+  ) {
+    const user = req.user as PayloadToken;
+    const customer = await this.usersService.findCustomer(user.sub);
+    const addressToModify = await this.addressService.findOne(id);
+
+    if (addressToModify.customer !== customer) {
+      return new ForbiddenException(new Error('action not allowed'));
+    }
+    return this.addressService.update(id, updateAddressDto);
+  }
+
+  @Get('orders')
+  async getOrders(@Req() req: Request) {
+    const user = req.user as PayloadToken;
+
+    console.log(user);
+    return this.ticketsService.ordersByCustomer(user.sub);
+  }
+
+  @Get('orders/:id')
+  async getOrder(@Req() req: Request, @Param() params: OrderIdDto) {
+    const user = req.user as PayloadToken;
+
+    console.log(user);
+    return this.ticketsService.orderByCustomer(user.sub, params.id);
   }
 }

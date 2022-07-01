@@ -6,6 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  LessThanOrEqual,
 } from 'typeorm';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 
@@ -44,7 +45,7 @@ export class Customer {
   @OneToOne(() => User, (user) => user.customer, { nullable: true })
   user: User;
 
-  @OneToMany(() => Address, (address) => address.customer)
+  @OneToMany(() => Address, (address) => address.customer, {})
   addresses: Address[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.address)

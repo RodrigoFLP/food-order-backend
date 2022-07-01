@@ -20,6 +20,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/models/roles.model';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { EmailConfirmationService } from '../email/email-confirmation/email-confirmation.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
@@ -27,10 +28,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Public()
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.usersService.create(createUserDto);
+    return user;
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)

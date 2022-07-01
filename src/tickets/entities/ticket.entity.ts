@@ -10,7 +10,6 @@ import {
 import { Store } from '../../stores/entities/store.entity';
 import { Address } from '../../users/entities/address.entity';
 import { Customer } from '../../users/entities/customer.entity';
-import { Status } from './status.entity';
 import { TicketItem } from './ticketItem.entity';
 
 @Entity()
@@ -30,10 +29,23 @@ export class Ticket {
   @Column({ type: 'numeric', precision: 15, scale: 4 })
   totalAmount: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    enum: ['delivery', 'pickup'],
+    nullable: false,
+  })
   orderType: string;
 
-  @Column({ type: 'date' })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    enum: ['unpaid', 'placed', 'processing', 'delivering', 'delivered'],
+    default: 'unpaid',
+  })
+  status: string;
+
+  @Column({ type: 'date', nullable: true })
   scheduledDate?: Date;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
@@ -42,7 +54,7 @@ export class Ticket {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => Address, (address) => address.tickets)
+  @ManyToOne(() => Address, (address) => address.tickets, { nullable: true })
   address: Address;
 
   @ManyToOne(() => Store, (store) => store.tickets)
@@ -50,9 +62,6 @@ export class Ticket {
 
   @ManyToOne(() => Customer, (customer) => customer.tickets)
   customer: Customer;
-
-  @ManyToOne(() => Status, (status) => status.id, { nullable: true })
-  status: Status;
 
   @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket, {
     onDelete: 'CASCADE',

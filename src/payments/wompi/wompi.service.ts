@@ -28,7 +28,10 @@ export class WompiService {
           {
             identificadorEnlaceComercio: 'string',
             monto: total,
-            nombreProducto: `Orden #${orderId}`,
+            nombreProducto: `Orden #${orderId.split('-')[0]}`,
+            configuracion: {
+              urlWebhook: 'https://google.com/ticket?id=orderId',
+            },
           },
           {
             headers: {

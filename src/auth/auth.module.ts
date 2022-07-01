@@ -10,11 +10,13 @@ import config from '../../config';
 import { ConfigType } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtHeaderStrategy } from './strategies/jwtheader.strategy';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    EmailModule,
     JwtModule.registerAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {

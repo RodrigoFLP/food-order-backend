@@ -22,7 +22,7 @@ export class AddressesService {
     return this.addressRepository.find({ relations: ['customer'] });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     const address = this.addressRepository.findOne(id);
     if (!address) {
       throw new NotFoundException(`address doesn't exist`);
@@ -30,7 +30,7 @@ export class AddressesService {
     return this.addressRepository.findOne(id);
   }
 
-  async update(id: number, data: UpdateAddressDto) {
+  async update(id: string, data: UpdateAddressDto) {
     const updatedAddress = await this.addressRepository.findOne(id);
 
     this.addressRepository.merge(updatedAddress, data);
@@ -38,7 +38,7 @@ export class AddressesService {
     return this.addressRepository.save(updatedAddress);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.addressRepository.delete(id);
   }
 

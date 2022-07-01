@@ -36,18 +36,18 @@ export class AddressesController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.addressesService.findOne(+id);
+    return this.addressesService.findOne(id);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressesService.update(+id, updateAddressDto);
+    return this.addressesService.update(id, updateAddressDto);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.addressesService.remove(+id);
+    return this.addressesService.remove(id);
   }
 }

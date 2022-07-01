@@ -8,6 +8,11 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
+  Inject,
+  Headers,
+  BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -21,6 +26,11 @@ import { Request } from 'express';
 import { PayloadToken } from '../auth/models/token.model';
 import { UsersService } from '../users/users.service';
 import { WompiService } from '../payments/wompi/wompi.service';
+import { WompiWebhookBody } from '../payments/interfaces/confirm-payment';
+
+import { HmacSHA256 } from 'crypto-js';
+import config from '../../config';
+import { ConfigType } from '@nestjs/config';
 
 @Controller('tickets')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,6 +39,7 @@ export class TicketsController {
     private readonly ticketsService: TicketsService,
     private userService: UsersService,
     private wompiService: WompiService,
+    @Inject(config.KEY) private configService: ConfigType<typeof config>,
   ) {}
 
   @Post()
@@ -53,10 +64,30 @@ export class TicketsController {
   }
 
   @Post('calculate')
-  @Public()
   calculatePrice(@Body() createTicketDto: CreateTicketDto) {
-    console.log(createTicketDto);
+    // console.log(createTicketDto);
     return this.ticketsService.calculatePrice(createTicketDto);
+  }
+
+  @Public()
+  @Get('confirm-payment')
+  confirmPayment(
+    @Query('id') id: string,
+    @Body() wompiWebhookBody: WompiWebhookBody,
+    @Headers('wompi_hash') wompiHash,
+  ) {
+    const hash = HmacSHA256(
+      JSON.stringify(wompiWebhookBody),
+      this.configService.wompi.apiSecret,
+    );
+
+    if (hash !== wompiHash) {
+      throw new BadRequestException();
+    }
+
+    this.ticketsService.confirmPayment(id);
+
+    return 'Payment succesfull';
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
