@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -27,6 +28,28 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Public()
+  @Get('/search')
+  async search(
+    @Query('keyword') keyword: string,
+    @Query('take') take: number,
+    @Query('skip') skip: number,
+  ) {
+    console.log(keyword, take, skip);
+    if (!keyword) {
+      return [];
+    }
+
+    const products = await this.productsService.searchProducts(
+      keyword,
+      take,
+      skip,
+    );
+    console.log(products);
+
+    return products;
   }
 
   @Public()

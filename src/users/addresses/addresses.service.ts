@@ -45,4 +45,10 @@ export class AddressesService {
   findManyByCustomerId(id: number) {
     return this.addressRepository.find({ where: { customer: id } });
   }
+
+  findOneByCustomerId(customerId: number, addressId: string) {
+    return this.addressRepository.findOne({
+      where: { customer: customerId, id: addressId },
+    });
+  }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUIDVersion } from 'class-validator';
 import { Repository } from 'typeorm';
@@ -9,12 +13,14 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
 import { TicketItem } from './entities/ticketItem.entity';
+import { StatusService } from './status/status.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectRepository(TicketItem)
     private readonly ticketItemsRepo: Repository<TicketItem>,
+    private readonly statusService: StatusService,
     @InjectRepository(Ticket) private readonly ticketsRepo: Repository<Ticket>,
     private readonly customerService: CustomersService,
     private readonly addressService: AddressesService,
@@ -38,9 +44,12 @@ export class TicketsService {
       throw new NotFoundException(`address doesn't exist`);
     }
 
+    const status = await this.statusService.create();
+
+    newTicket.status = status;
     newTicket.customer = customer;
     newTicket.address = address;
-    newTicket.status = 'unpaid';
+    // newTicket.status = 'unpaid';
 
     await this.ticketsRepo.save(newTicket);
 
@@ -123,7 +132,7 @@ export class TicketsService {
   async confirmPayment(id: string) {
     const ticket = await this.ticketsRepo.findOne(id);
 
-    ticket.status = 'placed';
+    // ticket.status = 'placed';
 
     return this.ticketsRepo.save(ticket);
   }
@@ -215,11 +224,17 @@ export class TicketsService {
   async orderByCustomer(customerId: number, ticketId: string) {
     const ticketWithItemsAndProducts = await this.ticketsRepo
       .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.status', 'status')
       .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
-      .innerJoinAndSelect('ticketItems.product', 'product.id')
+      .innerJoinAndSelect('ticketItems.product', 'product')
       .where('tickets.customerId = :id', { id: customerId })
       .andWhere('tickets.id = :ticketId', { ticketId: ticketId })
       .getOne();
+
+    if (!ticketWithItemsAndProducts) {
+      throw new BadRequestException('ticket not found');
+    }
+
     return ticketWithItemsAndProducts;
   }
 }

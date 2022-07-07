@@ -2,14 +2,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Store } from '../../stores/entities/store.entity';
 import { Address } from '../../users/entities/address.entity';
 import { Customer } from '../../users/entities/customer.entity';
+import { Status } from './status.entity';
 import { TicketItem } from './ticketItem.entity';
 
 @Entity()
@@ -37,13 +40,17 @@ export class Ticket {
   })
   orderType: string;
 
-  @Column({
-    type: 'varchar',
-    length: 255,
-    enum: ['unpaid', 'placed', 'processing', 'delivering', 'delivered'],
-    default: 'unpaid',
-  })
-  status: string;
+  // @Column({
+  //   type: 'varchar',
+  //   length: 255,
+  //   enum: ['unpaid', 'placed', 'processing', 'delivering', 'delivered'],
+  //   default: 'unpaid',
+  // })
+  // status: string;
+
+  @OneToOne(() => Status)
+  @JoinColumn()
+  status: Status;
 
   @Column({ type: 'date', nullable: true })
   scheduledDate?: Date;

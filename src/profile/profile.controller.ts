@@ -1,8 +1,10 @@
 import {
   Body,
+  ConflictException,
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -60,7 +62,7 @@ export class ProfileController {
     const customer = await this.usersService.findCustomer(user.sub);
 
     if (customer.addresses.length >= 3) {
-      return new ForbiddenException(new Error('only 3 addresses allowed'));
+      throw new ForbiddenException(new Error('only 3 addresses allowed'));
     }
 
     const newAddress = await this.addressService.create(address, customer);
@@ -75,11 +77,13 @@ export class ProfileController {
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
     const user = req.user as PayloadToken;
-    const customer = await this.usersService.findCustomer(user.sub);
-    const addressToModify = await this.addressService.findOne(id);
+    const addressToModify = await this.addressService.findOneByCustomerId(
+      user.sub,
+      id,
+    );
 
-    if (addressToModify.customer !== customer) {
-      return new ForbiddenException(new Error('action not allowed'));
+    if (!addressToModify) {
+      throw new NotFoundException('address not found');
     }
     return this.addressService.update(id, updateAddressDto);
   }
@@ -88,15 +92,12 @@ export class ProfileController {
   async getOrders(@Req() req: Request) {
     const user = req.user as PayloadToken;
 
-    console.log(user);
     return this.ticketsService.ordersByCustomer(user.sub);
   }
 
   @Get('orders/:id')
   async getOrder(@Req() req: Request, @Param() params: OrderIdDto) {
     const user = req.user as PayloadToken;
-
-    console.log(user);
     return this.ticketsService.orderByCustomer(user.sub, params.id);
   }
 }

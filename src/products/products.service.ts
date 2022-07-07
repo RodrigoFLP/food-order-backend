@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { take } from 'rxjs';
+import internal = require('stream');
+import { ILike, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Category } from './entities/category.entity';
@@ -64,6 +66,23 @@ export class ProductsService {
     this.productsRepository.merge(product, changes);
 
     return this.productsRepository.save(product);
+  }
+
+  async searchProducts(keyword: string, take: number, skip: number) {
+    // const result = await this.productsRepository
+    //   .createQueryBuilder()
+    //   .select()
+    //   .where('name ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+    //   .getMany();
+
+    const result = await this.productsRepository.find({
+      where: { name: ILike('%' + keyword + '%') },
+      order: { name: 'DESC' },
+      take: take,
+      skip: skip,
+    });
+
+    return result;
   }
 
   remove(id: number) {

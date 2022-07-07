@@ -15,10 +15,10 @@ import { StatusService } from './status.service';
 export class StatusController {
   constructor(private readonly statusService: StatusService) {}
 
-  @Post()
-  create(@Body() createStatusDto: CreateStatusDto) {
-    return this.statusService.create(createStatusDto);
-  }
+  // @Post()
+  // create(@Body() createStatusDto: CreateStatusDto) {
+  //   return this.statusService.create(createStatusDto);
+  // }
 
   @Get()
   findAll() {
@@ -30,10 +30,10 @@ export class StatusController {
     return this.statusService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStatusDto: UpdateStatusDto) {
-    return this.statusService.update(+id, updateStatusDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateStatusDto: UpdateStatusDto) {
+  //   return this.statusService.update(+id, updateStatusDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
