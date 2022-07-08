@@ -72,7 +72,12 @@ export class AuthController {
 
   @Get('logout')
   logOut(@Res({ passthrough: true }) response: Response) {
-    response.cookie('Authentication', '', { httpOnly: true });
+    response.cookie('Authentication', '', {
+      httpOnly: true,
+      domain: '.panchos.com.sv',
+      secure: true,
+      sameSite: 'strict',
+    });
   }
 
   @UseGuards(AuthGuard('jwt'))

@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
   postgres:
+    restart: always
     image: postgres:13
     environment:
       - POSTGRES_DB=my_db
