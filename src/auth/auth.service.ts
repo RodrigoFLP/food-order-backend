@@ -31,10 +31,10 @@ export class AuthService {
 
     const token = this.jwtService.sign(payload);
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=864000;`;
+    return `Authentication=${token}; HttpOnly; sameSite=strict; secure;  Path=/; Max-Age=864000; domain=.panchos.com.sv`;
   }
 
   getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0;`;
+    return `Authentication=; HttpOnly; SameSite=strict; secure; Path=/; Max-Age=0; domain=.panchos.com.sv`;
   }
 }

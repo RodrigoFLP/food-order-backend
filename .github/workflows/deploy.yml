@@ -1,29 +1,29 @@
-name: Nest CI/CD
+# name: Nest CI/CD
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Deploy Nestjs API
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{secrets.SSH_HOST}}
-        key: ${{secrets.SSH_KEY}}
-        username: ${{secrets.SSH_USERNAME}}
-        passphrase: ${{secrets.SSH_PASSPHRASE}}
-        script: |
-          cd /var/www/api
-          git pull origin main
-          pm2 delete api
-          npm run migrations:run
-          npm run build
-          pm2 start dist/src/main.js --name api
-          pm2 save
-          echo 'Deployment succesful to digital ocean'
+#     steps:
+#     - name: Deploy Nestjs API
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{secrets.SSH_HOST}}
+#         key: ${{secrets.SSH_KEY}}
+#         username: ${{secrets.SSH_USERNAME}}
+#         passphrase: ${{secrets.SSH_PASSPHRASE}}
+#         script: |
+#           cd /var/www/api
+#           git pull origin main
+#           pm2 delete api
+#           npm run migrations:run
+#           npm run build
+#           pm2 start dist/src/main.js --name api
+#           pm2 save
+#           echo 'Deployment succesful to digital ocean'

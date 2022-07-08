@@ -37,6 +37,7 @@ export class AuthController {
     const user = req.user as User;
     const cookie = this.authService.generateJWT(user);
 
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Set-Cookie', cookie);
 
     res.send({
@@ -57,6 +58,7 @@ export class AuthController {
 
     const cookie = this.authService.generateJWT(user);
 
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Set-Cookie', cookie);
 
     res.send({
