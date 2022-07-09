@@ -75,14 +75,14 @@ export class ProductsService {
     //   .where('name ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
     //   .getMany();
 
-    const result = await this.productsRepository.find({
+    const result = await this.productsRepository.findAndCount({
       where: { name: ILike('%' + keyword + '%') },
       order: { name: 'DESC' },
       take: take,
       skip: skip,
     });
 
-    return result;
+    return { result: result[0], count: result[1] };
   }
 
   remove(id: number) {
