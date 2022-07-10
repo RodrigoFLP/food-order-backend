@@ -31,6 +31,7 @@ export class WompiService {
             nombreProducto: `Orden #${orderId.split('-')[0]}`,
             configuracion: {
               urlWebhook: 'https://google.com/ticket?id=orderId',
+              urlRedirect: 'https://panchos.com.sv/confirm-payment-redirect',
             },
           },
           {
