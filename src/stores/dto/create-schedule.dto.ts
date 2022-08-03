@@ -7,10 +7,10 @@ export class CreateScheduleDto {
   dayOfWeek: number;
 
   @IsDateString()
-  OpenTime: Date;
+  openTime: Date;
 
   @IsDateString()
-  CloseTime: Date;
+  closeTime: Date;
 
   @IsInt()
   @Min(0)

@@ -49,7 +49,6 @@ export class TicketsService {
     newTicket.status = status;
     newTicket.customer = customer;
     newTicket.address = address;
-    // newTicket.status = 'unpaid';
 
     await this.ticketsRepo.save(newTicket);
 
@@ -59,8 +58,6 @@ export class TicketsService {
         ...item,
         tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
       };
-
-      this.ticketItemsRepo.create(serializedItem);
 
       const product = await this.productService.findOne(item.productId);
 
@@ -83,7 +80,7 @@ export class TicketsService {
 
       if (serializedItem.tags.length !== 0) {
         for await (const tag of serializedItem.tags) {
-          const tagGroup = portion.tagGroups.find(
+          const tagGroup = product.portionsTagGroups.find(
             (tagGroup) => tagGroup.name === tag.name,
           );
           if (!tagGroup) {
@@ -116,7 +113,7 @@ export class TicketsService {
   }
 
   findAll() {
-    return this.ticketsRepo.find();
+    return this.ticketsRepo.find({ relations: ['customer', 'status'] });
   }
 
   async findOne(id: number) {
@@ -151,6 +148,8 @@ export class TicketsService {
     let total = 0;
     const ticketItems = [];
 
+    console.log(data);
+
     // add ticketItems and bind each one to ticket
     for await (const item of data.ticketItems) {
       const serializedItem = {
@@ -158,7 +157,9 @@ export class TicketsService {
         tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
       };
 
-      this.ticketItemsRepo.create(serializedItem);
+      console.log(serializedItem);
+
+      // this.ticketItemsRepo.create(serializedItem);
 
       const product = await this.productService.findOne(item.productId);
 
@@ -169,7 +170,7 @@ export class TicketsService {
       newTicketItem.tags = serializedItem.tags;
 
       const portion = product.portions.find(
-        (portion) => portion.name === item.portion.name,
+        (portion) => portion.name === newTicketItem.portion.name,
       );
 
       if (!portion) {
@@ -180,7 +181,7 @@ export class TicketsService {
 
       if (serializedItem.tags.length !== 0) {
         for await (const tag of serializedItem.tags) {
-          const tagGroup = portion.tagGroups.find(
+          const tagGroup = product.portionsTagGroups.find(
             (tagGroup) => tagGroup.name === tag.name,
           );
           if (!tagGroup) {

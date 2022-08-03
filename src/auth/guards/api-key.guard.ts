@@ -30,13 +30,9 @@ export class ApiKeyGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    console.log(isPublic);
-
     if (isPublic) {
       return true;
     }
-
-    console.log(isPublic);
 
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.header('Auth');

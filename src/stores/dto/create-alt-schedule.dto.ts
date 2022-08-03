@@ -13,10 +13,10 @@ export class CreateAltScheduleDto {
   overrideEndDate: Date;
 
   @IsDateString()
-  AltOpenTime: Date;
+  altOpenTime: Date;
 
   @IsDateString()
-  AltCloseTime: Date;
+  altCloseTime: Date;
 
   @IsInt()
   @Min(0)

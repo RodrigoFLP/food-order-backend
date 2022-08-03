@@ -34,6 +34,12 @@ export class SchedulesController {
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Get('main')
+  findAllByStoreId() {
+    return this.schedulesService.findAllByStoreId(1);
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.schedulesService.findOne(+id);

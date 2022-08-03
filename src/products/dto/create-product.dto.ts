@@ -7,6 +7,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
   IsUrl,
@@ -17,11 +18,16 @@ import { Type } from 'class-transformer';
 import { PrimaryColumn, Timestamp } from 'typeorm';
 
 export class TagGroup {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   name: string;
+
+  @IsArray()
+  @IsOptional()
+  @ArrayMinSize(1)
+  portions: number[];
 
   @IsString()
   @IsOptional()
@@ -46,8 +52,8 @@ export class TagGroup {
 }
 
 export class Portions {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   name: string;
@@ -57,6 +63,7 @@ export class Portions {
   price: number;
 
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @ArrayMinSize(0)
   @Type(() => TagGroup)
@@ -64,8 +71,8 @@ export class Portions {
 }
 
 export class Tags {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   name: string;
@@ -108,6 +115,12 @@ export class CreateProductDto {
 
   @IsDateString()
   lastUpdate: Timestamp;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(0)
+  @Type(() => TagGroup)
+  portionsTagGroups: TagGroup[];
 
   @IsArray()
   @ValidateNested({ each: true })

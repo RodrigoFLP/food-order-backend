@@ -29,6 +29,9 @@ export class Product {
   @Column({ type: 'jsonb' })
   portions: Portion[];
 
+  @Column({ type: 'jsonb', nullable: false, default: [] })
+  portionsTagGroups: TagGroup[];
+
   @Column({ type: 'jsonb' })
   tags: Tag[];
 
@@ -50,7 +53,7 @@ export class Product {
 }
 
 export class Portion {
-  id: number;
+  id: string;
   @IsString()
   name: string;
   @IsNumber()
@@ -59,8 +62,9 @@ export class Portion {
 }
 
 export class TagGroup {
-  id: number;
+  id: string;
   name: string;
+  portions: number[];
   color: string;
   max: number;
   min: number;
@@ -69,7 +73,7 @@ export class TagGroup {
 }
 
 export class Tag {
-  id: number;
+  id: string;
   name: string;
   value: string;
   price: number;

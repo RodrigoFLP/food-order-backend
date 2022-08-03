@@ -8,7 +8,10 @@ async function bootstrap() {
 
   console.log(process.env.ORIGIN_URL);
 
-  app.enableCors({ credentials: true, origin: process.env.ORIGIN_URL });
+  app.enableCors({
+    credentials: true,
+    origin: [process.env.ORIGIN_URL, process.env.SECOND_ORIGIN_URL],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),

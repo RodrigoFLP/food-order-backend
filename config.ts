@@ -4,6 +4,7 @@ export default registerAs('config', () => {
   return {
     apiKey: process.env.API_KEY,
     jwtSecret: process.env.JWT_SECRET,
+    domain: process.env.DOMAIN,
     wompi: {
       appId: process.env.WOMPI_APP_ID,
       apiSecret: process.env.WOMPI_API_SECRET,

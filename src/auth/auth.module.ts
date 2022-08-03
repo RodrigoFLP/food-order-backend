@@ -11,6 +11,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtHeaderStrategy } from './strategies/jwtheader.strategy';
 import { EmailModule } from '../email/email.module';
+import { AdminStrategy } from './strategies/admin.strategy';
 
 @Module({
   imports: [
@@ -29,7 +30,13 @@ import { EmailModule } from '../email/email.module';
       },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, JwtHeaderStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtHeaderStrategy,
+    AdminStrategy,
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

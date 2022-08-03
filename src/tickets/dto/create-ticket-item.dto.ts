@@ -14,8 +14,8 @@ import {
 import { PrimaryGeneratedColumn } from 'typeorm';
 
 export class Tags {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   name: string;
@@ -52,8 +52,8 @@ export class TagsGroups {
 }
 
 export class Portion {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   name: string;

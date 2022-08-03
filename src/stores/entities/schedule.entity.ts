@@ -9,11 +9,14 @@ export class Schedule {
   @Column({ type: 'int' })
   dayOfWeek: number;
 
-  @Column({ type: 'time' })
-  OpenTime: Date;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
-  @Column({ type: 'time' })
-  CloseTime: Date;
+  @Column({ type: 'timestamp' })
+  openTime: Date;
+
+  @Column({ type: 'timestamp' })
+  closeTime: Date;
 
   @ManyToOne(() => Store, (store) => store.schedules)
   store: Store;

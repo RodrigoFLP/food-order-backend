@@ -29,6 +29,10 @@ export class SchedulesService {
     return this.scheduleRepository.find();
   }
 
+  findAllByStoreId(id: number) {
+    return this.scheduleRepository.find({ where: { store: { id } } });
+  }
+
   async findOne(id: number) {
     const schedule = await this.scheduleRepository.findOne(id);
     if (!schedule) {

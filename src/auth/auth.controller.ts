@@ -37,7 +37,24 @@ export class AuthController {
     const user = req.user as User;
     const cookie = this.authService.generateJWT(user);
 
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Set-Cookie', cookie);
+
+    res.send({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      isEmailConfirmed: user.isEmailConfirmed,
+      firstName: user.customer.firstName,
+    });
+  }
+
+  @UseGuards(AuthGuard('admin'))
+  @UsePipes(new TrimPipe())
+  @Post('admin/login')
+  loginAdmin(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as User;
+    const cookie = this.authService.generateJWT(user);
+
     res.setHeader('Set-Cookie', cookie);
 
     res.send({

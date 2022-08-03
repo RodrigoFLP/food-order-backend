@@ -33,11 +33,13 @@ export class ProductsService {
   }
 
   findAll() {
-    return this.productsRepository.find();
+    return this.productsRepository.find({ relations: ['categories'] });
   }
 
   async findOne(id: number) {
-    const product = await this.productsRepository.findOne(id);
+    const product = await this.productsRepository.findOne(id, {
+      relations: ['categories'],
+    });
     if (!product) {
       console.log('not found');
       throw new NotFoundException(`Product with id ${id} doesn't exist`);

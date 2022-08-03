@@ -15,11 +15,11 @@ export class AltSchedule {
   @Column({ type: 'int' })
   dayOfWeek: number;
 
-  @Column({ type: 'time' })
-  AltOpenTime: Date;
+  @Column({ type: 'timestamp' })
+  altOpenTime: Date;
 
-  @Column({ type: 'time' })
-  AltCloseTime: Date;
+  @Column({ type: 'timestamp' })
+  altCloseTime: Date;
 
   @ManyToOne(() => Store, (store) => store.altSchedules)
   store: Store;
