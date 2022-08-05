@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Status } from '../entities/status.entity';
 import { Ticket } from '../entities/ticket.entity';
+import { StatusType } from '../models/status.model';
 
 @Injectable()
 export class StatusService {
@@ -28,11 +29,41 @@ export class StatusService {
     return status;
   }
 
-  // async update(id: number, updateStatusDto: UpdateStatusDto) {
-  //   const status = await this.findOne(id);
-  //   this.statusRepository.merge(status, updateStatusDto);
-  //   return this.statusRepository.create(status);
-  // }
+  async update(id: number, step: string) {
+    const status = await this.findOne(id);
+
+    if (step === StatusType.DELIVERED) {
+      status.orderReceived = new Date(Date.now());
+    }
+
+    if (step === StatusType.PREPARED) {
+      status.orderReceived = null;
+      status.orderPrepared = new Date(Date.now());
+    }
+
+    if (step === StatusType.CONFIRMED) {
+      status.orderReceived = null;
+      status.orderPrepared = null;
+      status.orderConfirmed = new Date(Date.now());
+    }
+
+    if (step === StatusType.PAID) {
+      status.orderReceived = null;
+      status.orderPrepared = null;
+      status.orderConfirmed = null;
+      status.orderPaid = new Date(Date.now());
+    }
+
+    if (step === StatusType.PLACED) {
+      status.orderReceived = null;
+      status.orderPrepared = null;
+      status.orderConfirmed = null;
+      status.orderPaid = null;
+      status.orderPlaced = new Date(Date.now());
+    }
+
+    return this.statusRepository.save(status);
+  }
 
   remove(id: number) {
     return this.statusRepository.delete(id);

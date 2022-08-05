@@ -7,7 +7,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsNumberString,
   IsOptional,
   IsString,
   IsUrl,
@@ -99,9 +98,9 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
+  @IsOptional()
   @IsUrl()
   @IsString()
-  @IsOptional()
   image: string;
 
   @IsArray()
@@ -114,6 +113,7 @@ export class CreateProductDto {
   price: number;
 
   @IsDateString()
+  @IsOptional()
   lastUpdate: Timestamp;
 
   @IsArray()

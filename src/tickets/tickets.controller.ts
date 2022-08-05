@@ -31,12 +31,15 @@ import { WompiWebhookBody } from '../payments/interfaces/confirm-payment';
 import { HmacSHA256 } from 'crypto-js';
 import config from '../../config';
 import { ConfigType } from '@nestjs/config';
+import { StatusType } from './models/status.model';
+import { StatusService } from './status/status.service';
 
 @Controller('tickets')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class TicketsController {
   constructor(
     private readonly ticketsService: TicketsService,
+    private statusService: StatusService,
     private userService: UsersService,
     private wompiService: WompiService,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
@@ -97,6 +100,12 @@ export class TicketsController {
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Get('active')
+  findAllActive() {
+    return this.ticketsService.findAllActive();
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ticketsService.findOne(+id);
@@ -112,5 +121,15 @@ export class TicketsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ticketsService.remove(+id);
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Patch('status/:statusid')
+  updateStatus(
+    @Param('statusid') id: number,
+    @Body() body: { status: StatusType },
+  ) {
+    console.log(body.status);
+    return this.statusService.update(id, body.status);
   }
 }

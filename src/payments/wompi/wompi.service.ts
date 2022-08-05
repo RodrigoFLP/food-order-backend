@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs';
+import config from '../../../config';
 import { IAccessToken } from '../interfaces/wompi';
 import { PaymentsService } from '../payments.service';
 
@@ -8,6 +10,7 @@ import { PaymentsService } from '../payments.service';
 export class WompiService {
   constructor(
     @Inject('WOMPI_ACCESS_TOKEN') private accessToken: IAccessToken,
+    @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private httpService: HttpService,
     private paymentsService: PaymentsService,
   ) {}
@@ -42,6 +45,24 @@ export class WompiService {
         )
         .pipe(map((res) => res.data)),
     );
+    return { ...response };
+  }
+
+  async getOrders(from: string, to: string) {
+    console.log('corre');
+    const response = await lastValueFrom(
+      this.httpService
+        .get(
+          `https://api.wompi.sv/TransaccionCompra?IdAplicativo=${this.configService.wompi.appId}`,
+          {
+            headers: {
+              authorization: `Bearer ${this.accessToken.access_token}`,
+            },
+          },
+        )
+        .pipe(map((res) => res.data)),
+    );
+    console.log(response);
     return { ...response };
   }
 }

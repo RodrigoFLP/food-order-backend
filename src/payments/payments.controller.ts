@@ -20,4 +20,10 @@ export class PaymentsController {
     const res = await this.wompiService.createPaymentLink('ndifaunuea', 20);
     return res;
   }
+
+  @Get('wompi/orders')
+  async getAllOrders() {
+    const res = await this.wompiService.getOrders('', '');
+    return res;
+  }
 }

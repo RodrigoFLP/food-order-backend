@@ -33,7 +33,10 @@ export class ProductsService {
   }
 
   findAll() {
-    return this.productsRepository.find({ relations: ['categories'] });
+    return this.productsRepository.find({
+      relations: ['categories'],
+      order: { id: 'ASC' },
+    });
   }
 
   async findOne(id: number) {

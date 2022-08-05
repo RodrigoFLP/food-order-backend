@@ -19,11 +19,11 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, select: false })
   password: string;
 
   @Exclude()
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false })
   salt: string;
 
   @Column({ type: 'varchar', length: 255 })

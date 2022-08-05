@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UUIDVersion } from 'class-validator';
 import { Repository } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { AddressesService } from '../users/addresses/addresses.service';
@@ -113,7 +112,24 @@ export class TicketsService {
   }
 
   findAll() {
-    return this.ticketsRepo.find({ relations: ['customer', 'status'] });
+    return this.ticketsRepo.find({
+      relations: ['customer', 'status'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  findAllActive() {
+    return this.ticketsRepo
+      .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.status', 'status')
+      .innerJoinAndSelect('tickets.customer', 'customer')
+      .innerJoinAndSelect('tickets.address', 'address')
+      .innerJoinAndSelect('customer.user', 'user')
+      .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
+      .innerJoinAndSelect('ticketItems.product', 'product.id')
+      .where('status.orderReceived IS NULL')
+      .orderBy('tickets.createdAt', 'DESC')
+      .getMany();
   }
 
   async findOne(id: number) {
@@ -218,6 +234,7 @@ export class TicketsService {
       .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
       .innerJoinAndSelect('ticketItems.product', 'product.id')
       .where('tickets.customerId = :id', { id: customerId })
+      .orderBy('tickets.createdAt', 'DESC')
       .getMany();
     return ticketWithItemsAndProducts;
   }
