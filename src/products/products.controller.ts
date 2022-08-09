@@ -54,8 +54,8 @@ export class ProductsController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query('take') take: number, @Query('skip') skip: number) {
+    return this.productsService.findAll(take, skip);
   }
 
   @Public()

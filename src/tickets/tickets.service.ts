@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductsService } from '../products/products.service';
+import { StoresService } from '../stores/stores.service';
 import { AddressesService } from '../users/addresses/addresses.service';
 import { CustomersService } from '../users/customers/customers.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -24,6 +25,7 @@ export class TicketsService {
     private readonly customerService: CustomersService,
     private readonly addressService: AddressesService,
     private readonly productService: ProductsService,
+    private readonly storeService: StoresService,
   ) {}
 
   async create(data: CreateTicketDto, customerId: number) {
@@ -107,6 +109,15 @@ export class TicketsService {
     }
     newTicket.totalAmount = total;
 
+    const store = await this.storeService.findOne(1);
+
+    newTicket.totalAmount = total;
+
+    if (newTicket.orderType === 'delivery' && store.isDeliveryCostEnabled) {
+      newTicket.totalAmount += +store.deliveryCost;
+      newTicket.deliveryCost = +store.deliveryCost;
+    }
+
     await this.ticketsRepo.save(newTicket);
     return newTicket;
   }
@@ -135,6 +146,7 @@ export class TicketsService {
   async findOne(id: number) {
     const ticketWithItemsAndProducts = await this.ticketsRepo
       .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.status', 'status')
       .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
       .innerJoinAndSelect('ticketItems.product', 'product.id')
       .where('tickets.id = :id', { id })
@@ -223,14 +235,22 @@ export class TicketsService {
       ticketItems.push(newTicketItem);
     }
 
+    const store = await this.storeService.findOne(1);
+
     newTicket.totalAmount = total;
 
-    return newTicket;
+    if (newTicket.orderType === 'delivery' && store.isDeliveryCostEnabled) {
+      newTicket.totalAmount += +store.deliveryCost;
+      newTicket.deliveryCost = +store.deliveryCost;
+    }
+
+    return { ...newTicket, ticketItems };
   }
 
   async ordersByCustomer(customerId: number) {
     const ticketWithItemsAndProducts = await this.ticketsRepo
       .createQueryBuilder('tickets')
+      .innerJoinAndSelect('tickets.status', 'status')
       .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
       .innerJoinAndSelect('ticketItems.product', 'product.id')
       .where('tickets.customerId = :id', { id: customerId })
@@ -245,6 +265,8 @@ export class TicketsService {
       .innerJoinAndSelect('tickets.status', 'status')
       .innerJoinAndSelect('tickets.ticketItems', 'ticketItems')
       .innerJoinAndSelect('ticketItems.product', 'product')
+      .innerJoinAndSelect('tickets.customer', 'customer')
+      .innerJoinAndSelect('tickets.address', 'address')
       .where('tickets.customerId = :id', { id: customerId })
       .andWhere('tickets.id = :ticketId', { ticketId: ticketId })
       .getOne();

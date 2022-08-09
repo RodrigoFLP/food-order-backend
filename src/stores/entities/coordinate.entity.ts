@@ -12,6 +12,6 @@ export class Coordinate {
   @Column({ type: 'float8' })
   lon: number;
 
-  @ManyToOne(() => Area, (area) => area.coordinates)
+  @ManyToOne(() => Area, (area) => area.coordinates, { onDelete: 'CASCADE' })
   area: Area;
 }

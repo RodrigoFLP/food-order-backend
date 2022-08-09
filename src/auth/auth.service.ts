@@ -46,6 +46,8 @@ export class AuthService {
       throw new ForbiddenException('Invalid admin');
     }
 
+    console.log(email, user);
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (user && isMatch) {

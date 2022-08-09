@@ -19,6 +19,8 @@ import { Public } from '../auth/decorators/public.decorator';
 import { AreasService } from './areas/areas.service';
 import { CoordinatesService } from './coordinates/coordinates.service';
 import { CreateAreaDto } from './dto/create-area.dto';
+import { SchedulesService } from './schedules/schedules.service';
+import { UpdateScheduleBatch } from './dto/update-schedule-batch.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('stores')
@@ -27,6 +29,7 @@ export class StoresController {
     private readonly storesService: StoresService,
     private readonly areasService: AreasService,
     private readonly coordinatesService: CoordinatesService,
+    private readonly schedulesService: SchedulesService,
   ) {}
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -39,6 +42,46 @@ export class StoresController {
   @Get()
   findAll() {
     return this.storesService.findAll();
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Patch('schedule')
+  async updateSchedule(@Body() mutations: UpdateScheduleBatch[]) {
+    const toUpdate = mutations.filter((mutation) => mutation.update);
+    const toCreate = mutations.filter((mutation) => mutation.create);
+    const toRemove = mutations.filter((mutation) => mutation.delete);
+
+    for await (const update of toUpdate) {
+      await this.schedulesService.update(update.id, {
+        closeTime: update.closeTime,
+        openTime: update.openTime,
+        dayOfWeek: update.dayOfWeek,
+        isActive: update.isActive,
+        storeId: 1,
+      });
+    }
+
+    for await (const create of toCreate) {
+      await this.schedulesService.create({
+        closeTime: create.closeTime,
+        openTime: create.openTime,
+        dayOfWeek: create.dayOfWeek,
+        isActive: create.isActive,
+        storeId: 1,
+      });
+    }
+
+    for await (const remove of toRemove) {
+      await this.schedulesService.remove(remove.id);
+    }
+
+    return { message: 'Succesful' };
+  }
+
+  @Public()
+  @Get('is-open')
+  IsOpen() {
+    return this.storesService.isOpen();
   }
 
   @Public()
@@ -66,13 +109,19 @@ export class StoresController {
     @Body() createAreaDto: CreateAreaDto,
   ) {
     const store = await this.storesService.findOne(+id);
-    const newArea = await this.areasService.create(store);
+    const newArea = await this.areasService.create(store, createAreaDto);
 
     for await (const coordinate of createAreaDto.coordinates) {
       await this.coordinatesService.create(newArea, coordinate);
     }
 
     return newArea;
+  }
+
+  @Delete(':id/area/:areaId')
+  async deleteArea(@Param('id') id: string, @Param('areaId') areaId: string) {
+    const store = await this.storesService.findOne(+id);
+    return this.areasService.delete(+areaId);
   }
 
   @Public()

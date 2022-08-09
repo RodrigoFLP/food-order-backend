@@ -24,11 +24,12 @@ export class Tags {
   value: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   price: number;
 
   @IsNumber()
+  @Min(0)
   @IsOptional()
   ratio: number;
 

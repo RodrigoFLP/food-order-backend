@@ -1,4 +1,11 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsLatitude,
+  IsLongitude,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateStoreDto {
   @IsString()
@@ -24,6 +31,12 @@ export class CreateStoreDto {
   @IsString()
   phoneNumber: string;
 
+  @IsLatitude()
+  lat: number;
+
+  @IsLongitude()
+  lon: number;
+
   @IsBoolean()
   isDeliveryEnabled: boolean;
 
@@ -32,6 +45,33 @@ export class CreateStoreDto {
 
   @IsBoolean()
   isSchedulingEnabled: boolean;
+
+  @IsBoolean()
+  isTaxEnabled: boolean;
+
+  @IsBoolean()
+  isCashPaymentEnabled: boolean;
+
+  @IsBoolean()
+  isWompiPaymentEnabled: boolean;
+
+  @IsBoolean()
+  isDeliveryCostEnabled: boolean;
+
+  @IsNumber()
+  deliveryCost: number;
+
+  @IsNumber()
+  deliveryMin: number;
+
+  @IsString()
+  whatsappNumber: string;
+
+  @IsString()
+  facebook: string;
+
+  @IsString()
+  instagram: string;
 
   @IsBoolean()
   @IsOptional()

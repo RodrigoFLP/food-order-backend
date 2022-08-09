@@ -6,6 +6,7 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -85,6 +86,23 @@ export class AuthController {
       isEmailConfirmed: user.isEmailConfirmed,
       firstName: user.customer.firstName,
     });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('resend-email-confirmation')
+  async resendEmailConfirmation(@Req() request: Request) {
+    console.log('hola');
+
+    const user = request.user as PayloadToken;
+    const { email, isEmailConfirmed } = await this.userService.findOne(
+      user.sub,
+    );
+
+    if (isEmailConfirmed) {
+      throw new UnauthorizedException('El email ya ha sido confirmado');
+    }
+
+    return this.emailConfirmationService.sendVerificationLink(email);
   }
 
   @Get('logout')

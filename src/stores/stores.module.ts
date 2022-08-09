@@ -27,5 +27,6 @@ import { Coordinate } from './entities/coordinate.entity';
     AreasService,
     CoordinatesService,
   ],
+  exports: [StoresService],
 })
 export class StoresModule {}

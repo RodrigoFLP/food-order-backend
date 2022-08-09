@@ -32,10 +32,12 @@ export class ProductsService {
     return this.productsRepository.save(newProduct);
   }
 
-  findAll() {
+  findAll(take: number, skip: number) {
     return this.productsRepository.find({
       relations: ['categories'],
       order: { id: 'ASC' },
+      take: take,
+      skip: skip,
     });
   }
 

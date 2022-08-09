@@ -29,6 +29,9 @@ export class Ticket {
   //   return 2000;
   // }
 
+  @Column({ type: 'numeric', precision: 15, scale: 4, nullable: true })
+  deliveryCost: number;
+
   @Column({ type: 'numeric', precision: 15, scale: 4 })
   totalAmount: number;
 

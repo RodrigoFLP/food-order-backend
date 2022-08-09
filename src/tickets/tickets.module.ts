@@ -12,6 +12,7 @@ import { StatusService } from './status/status.service';
 import { StatusController } from './status/status.controller';
 import { Status } from './entities/status.entity';
 import { PaymentsModule } from '../payments/payments.module';
+import { StoresModule } from '../stores/stores.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PaymentsModule } from '../payments/payments.module';
     UsersModule,
     ProductsModule,
     PaymentsModule,
+    StoresModule,
   ],
   controllers: [TicketsController, TicketItemsController, StatusController],
   providers: [TicketsService, TicketItemsService, StatusService],

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateAreaDto } from '../dto/create-area.dto';
 import { Area } from '../entities/area.entity';
 import { Store } from '../entities/store.entity';
 
@@ -10,8 +11,8 @@ export class AreasService {
     @InjectRepository(Area) private readonly areasRepo: Repository<Area>,
   ) {}
 
-  create(store: Store) {
-    const area = this.areasRepo.create();
+  create(store: Store, newArea: CreateAreaDto) {
+    const area = this.areasRepo.create(newArea);
     area.store = store;
     area.isActive = true;
 
@@ -25,5 +26,9 @@ export class AreasService {
     });
 
     return areas;
+  }
+
+  delete(id: number) {
+    return this.areasRepo.delete(id);
   }
 }
