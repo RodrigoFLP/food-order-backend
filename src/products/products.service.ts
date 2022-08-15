@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { take } from 'rxjs';
-import internal = require('stream');
 import { ILike, Repository } from 'typeorm';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, Tags } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class ProductsService {
@@ -14,6 +13,8 @@ export class ProductsService {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    @InjectRepository(Category)
+    private tagCategoriesRepository: Repository<Tag>,
   ) {}
 
   async create(data: CreateProductDto) {
@@ -34,7 +35,7 @@ export class ProductsService {
 
   findAll(take: number, skip: number) {
     return this.productsRepository.find({
-      relations: ['categories'],
+      relations: ['categories', 'tagsCategories'],
       order: { id: 'ASC' },
       take: take,
       skip: skip,
@@ -43,7 +44,7 @@ export class ProductsService {
 
   async findOne(id: number) {
     const product = await this.productsRepository.findOne(id, {
-      relations: ['categories'],
+      relations: ['categories', 'tagsCategories'],
     });
     if (!product) {
       console.log('not found');
@@ -70,6 +71,22 @@ export class ProductsService {
       }
       product.categories = categories;
     }
+
+    if (!!changes.tagsCategoriesId && changes.tagsCategoriesId.length !== 0) {
+      const tagsCategories = await this.tagCategoriesRepository.findByIds(
+        changes.tagsCategoriesId,
+      );
+
+      if (tagsCategories.length < 1) {
+        throw new NotFoundException(`tags don't exist`);
+      }
+      product.tagsCategories = tagsCategories;
+    }
+
+    if (changes.tagsCategoriesId.length === 0) {
+      product.tagsCategories = [];
+    }
+
     this.productsRepository.merge(product, changes);
 
     return this.productsRepository.save(product);

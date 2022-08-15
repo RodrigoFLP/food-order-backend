@@ -73,7 +73,16 @@ export class CreateStoreDto {
   @IsString()
   instagram: string;
 
+  @IsString()
+  headerImage: string;
+
+  @IsString()
+  headerUrl: string;
+
   @IsBoolean()
   @IsOptional()
   productException: boolean;
+
+  @IsNumber()
+  defaultHomeTagCategoryId: number;
 }

@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { TicketItem } from '../../tickets/entities/ticketItem.entity';
 import { Category } from './category.entity';
+import { Tag as TagEntity } from './tag.entity';
 
 @Entity()
 export class Product {
@@ -45,8 +46,15 @@ export class Product {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToMany(() => Category, (category) => category.products)
+  @ManyToMany(() => Category, (category) => category.products, {
+    onDelete: 'CASCADE',
+  })
   categories: Category[];
+
+  @ManyToMany(() => TagEntity, (tags) => tags.products, {
+    onDelete: 'CASCADE',
+  })
+  tagsCategories: TagEntity[];
 
   @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket)
   ticketItems: TicketItem[];

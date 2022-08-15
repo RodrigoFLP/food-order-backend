@@ -56,6 +56,7 @@ export class AuthController {
     const user = req.user as User;
     const cookie = this.authService.generateJWT(user);
 
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Set-Cookie', cookie);
 
     res.send({
@@ -119,6 +120,25 @@ export class AuthController {
   @Get('check')
   async authenticate(@Req() request: Request) {
     const user = request.user as PayloadToken;
+    const {
+      id,
+      email,
+      role,
+      isEmailConfirmed,
+      customer: { firstName },
+    } = await this.userService.findOne(user.sub);
+    return { id, email, role, isEmailConfirmed, firstName };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('check-admin')
+  async authenticateAdmin(@Req() request: Request) {
+    const user = request.user as PayloadToken;
+
+    if (user.role === 'customer') {
+      throw new UnauthorizedException('User not allowed');
+    }
+
     const {
       id,
       email,

@@ -14,10 +14,12 @@ import { AreasService } from './areas/areas.service';
 import { CoordinatesService } from './coordinates/coordinates.service';
 import { Area } from './entities/area.entity';
 import { Coordinate } from './entities/coordinate.entity';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Store, Schedule, AltSchedule, Area, Coordinate]),
+    ProductsModule,
   ],
   controllers: [StoresController, SchedulesController, AltSchedulesController],
   providers: [

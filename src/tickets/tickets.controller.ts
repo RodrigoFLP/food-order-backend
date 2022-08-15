@@ -79,10 +79,16 @@ export class TicketsController {
     @Body() wompiWebhookBody: WompiWebhookBody,
     @Headers('wompi_hash') wompiHash,
   ) {
+    console.log('wompiWebhoookBody: ', wompiWebhookBody);
+    console.log('wompiHash: ', wompiHash);
+    console.log('id: ', id);
+
     const hash = HmacSHA256(
       JSON.stringify(wompiWebhookBody),
       this.configService.wompi.apiSecret,
     );
+
+    console.log('hash: ', hash);
 
     if (hash !== wompiHash) {
       throw new BadRequestException();

@@ -108,6 +108,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   categoriesId: number[];
 
+  @IsArray()
+  tagsCategoriesId: number[];
+
   @IsNumber()
   @Min(0)
   price: number;

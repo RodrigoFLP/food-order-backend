@@ -120,7 +120,7 @@ export class StoresController {
 
   @Delete(':id/area/:areaId')
   async deleteArea(@Param('id') id: string, @Param('areaId') areaId: string) {
-    const store = await this.storesService.findOne(+id);
+    await this.storesService.findOne(+id);
     return this.areasService.delete(+areaId);
   }
 

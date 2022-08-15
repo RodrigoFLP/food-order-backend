@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Tag } from '../../products/entities/tag.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { AltSchedule } from './alt-schedule.entity';
 import { Area } from './area.entity';
@@ -89,4 +97,14 @@ export class Store {
 
   @Column({ type: 'numeric', precision: 15, scale: 4, nullable: true })
   whatsapp: number;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  headerImage: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  headerUrl: string;
+
+  @OneToOne(() => Tag, { nullable: true })
+  @JoinColumn()
+  defaultHomeTagCategory: Tag;
 }

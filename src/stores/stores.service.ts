@@ -1,18 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Tag } from '../products/entities/tag.entity';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from './entities/store.entity';
+import { TagsService } from '../products/tags/tags.service';
 
 @Injectable()
 export class StoresService {
   constructor(
     @InjectRepository(Store) private readonly storesRepo: Repository<Store>,
+    private readonly tagService: TagsService,
   ) {}
 
-  create(createStoreDto: CreateStoreDto) {
+  async create(createStoreDto: CreateStoreDto) {
     const newStore = this.storesRepo.create(createStoreDto);
+
+    if (createStoreDto.defaultHomeTagCategoryId) {
+      const tag = await this.tagService.findOne(
+        createStoreDto.defaultHomeTagCategoryId,
+      );
+
+      newStore.defaultHomeTagCategory = tag;
+    }
 
     return this.storesRepo.save(newStore);
   }
@@ -66,7 +77,12 @@ export class StoresService {
 
   async findOne(id: number) {
     const store = await this.storesRepo.findOne(+id, {
-      relations: ['schedules', 'altSchedules', 'areas'],
+      relations: [
+        'schedules',
+        'altSchedules',
+        'areas',
+        'defaultHomeTagCategory',
+      ],
     });
 
     if (!store) {
@@ -80,6 +96,14 @@ export class StoresService {
 
     if (!store) {
       throw new NotFoundException(`store ${id} doesn't exist`);
+    }
+
+    if (changes.defaultHomeTagCategoryId) {
+      const tag = await this.tagService.findOne(
+        changes.defaultHomeTagCategoryId,
+      );
+
+      store.defaultHomeTagCategory = tag;
     }
 
     this.storesRepo.merge(store, changes);
