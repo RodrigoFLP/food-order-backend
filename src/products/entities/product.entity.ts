@@ -56,7 +56,9 @@ export class Product {
   })
   tagsCategories: TagEntity[];
 
-  @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket)
+  @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket, {
+    onDelete: 'CASCADE',
+  })
   ticketItems: TicketItem[];
 }
 
