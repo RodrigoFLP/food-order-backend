@@ -166,7 +166,7 @@ export class TicketsService {
     return `This action updates a #${id} ticket`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.ticketsRepo.delete(id);
   }
 

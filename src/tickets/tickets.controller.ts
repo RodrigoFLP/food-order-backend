@@ -126,7 +126,7 @@ export class TicketsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ticketsService.remove(+id);
+    return this.ticketsService.remove(id);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
