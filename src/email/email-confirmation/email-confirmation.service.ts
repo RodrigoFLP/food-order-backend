@@ -18,7 +18,7 @@ export class EmailConfirmationService {
     private readonly usersService: UsersService,
   ) {}
 
-  public sendVerificationLink(email: string) {
+  public async sendVerificationLink(email: string) {
     const payload: VerificationTokenPayload = { email };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -31,12 +31,14 @@ export class EmailConfirmationService {
       'EMAIL_CONFIRMATION_URL',
     )}?token=${token}`;
 
-    const text = `Welcome to the application. To confirm the email address, click here: ${url}`;
-
     return this.emailService.sendMail({
+      from: 'Panchos Villa <soporte@panchos.com.sv>',
       to: email,
-      subject: 'Email confirmation',
-      text,
+      subject: 'Confirma tu correo',
+      template: 'confirmation',
+      context: {
+        link: url,
+      },
     });
   }
 

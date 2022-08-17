@@ -9,9 +9,37 @@ import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailConfirmationController } from './email-confirmation/email-confirmation.controller';
 import { UsersModule } from '../users/users.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
+    MailerModule.forRootAsync({
+      inject: [config.KEY],
+      useFactory: (configService: ConfigType<typeof config>) => {
+        return {
+          transport: {
+            host: configService.emailHost,
+            port: 465,
+            secure: true,
+            auth: {
+              user: configService.emailUser,
+              pass: configService.emailPassword,
+            },
+          },
+          defaults: {
+            from: 'Panchos Villa <soporte@panchos.com.sv>', // outgoing email ID
+          },
+          template: {
+            dir: process.cwd() + '/template/',
+            adapter: new HandlebarsAdapter(), // or new PugAdapter()
+            options: {
+              strict: true,
+            },
+          },
+        };
+      },
+    }),
     ConfigModule,
     UsersModule,
     JwtModule.registerAsync({
