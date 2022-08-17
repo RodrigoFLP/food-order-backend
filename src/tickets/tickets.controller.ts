@@ -73,7 +73,7 @@ export class TicketsController {
   }
 
   @Public()
-  @Get('confirm-payment')
+  @Post('confirm-payment')
   confirmPayment(
     @Query('id') id: string,
     @Body() wompiWebhookBody: WompiWebhookBody,
