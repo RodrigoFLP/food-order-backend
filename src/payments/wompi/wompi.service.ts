@@ -48,6 +48,20 @@ export class WompiService {
     return { ...response };
   }
 
+  async isOrderReal(id: string) {
+    const response = await lastValueFrom(
+      this.httpService
+        .get(`https://api.wompi.sv/TransaccionCompra/${id}`, {
+          headers: {
+            authorization: `Bearer ${this.accessToken.access_token}`,
+          },
+        })
+        .pipe(map((res) => res.data)),
+    );
+
+    return { isReal: response.esReal, isSuccess: response.esAprobada };
+  }
+
   async getOrders(from: string, to: string) {
     console.log('corre');
     const response = await lastValueFrom(
