@@ -143,7 +143,7 @@ export class TicketsService {
       .getMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const ticketWithItemsAndProducts = await this.ticketsRepo
       .createQueryBuilder('tickets')
       .innerJoinAndSelect('tickets.status', 'status')
@@ -155,13 +155,20 @@ export class TicketsService {
   }
 
   async confirmPayment(id: string) {
-    const ticket = await this.ticketsRepo.findOne(id);
+    const ticket = await this.findOne(id);
+
+    console.log('Ticket: ', ticket);
 
     console.log('Llega acá: ', new Date(Date.now()));
 
     ticket.status.orderPaid = new Date(Date.now());
 
-    return this.ticketsRepo.save(ticket);
+    const updated = await this.statusService.update(
+      ticket.status.id,
+      'OrderPaid',
+    );
+
+    return updated;
   }
 
   update(id: number, updateTicketDto: UpdateTicketDto) {
