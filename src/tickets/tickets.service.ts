@@ -157,7 +157,9 @@ export class TicketsService {
   async confirmPayment(id: string) {
     const ticket = await this.ticketsRepo.findOne(id);
 
-    // ticket.status = 'placed';
+    console.log('Llega acá: ', new Date(Date.now()));
+
+    ticket.status.orderPaid = new Date(Date.now());
 
     return this.ticketsRepo.save(ticket);
   }
