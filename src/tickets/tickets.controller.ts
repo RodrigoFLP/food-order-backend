@@ -77,7 +77,7 @@ export class TicketsController {
   confirmPayment(
     @Query('id') id: string,
     @Body() wompiWebhookBody: WompiWebhookBody,
-    @Headers('wompi_hash') wompiHash,
+    @Headers() wompiHash,
   ) {
     console.log('wompiWebhoookBody: ', wompiWebhookBody);
     console.log('wompiHash: ', wompiHash);
