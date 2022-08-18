@@ -128,7 +128,7 @@ export class TicketsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ticketsService.findOne(+id);
+    return this.ticketsService.findOne(id);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
