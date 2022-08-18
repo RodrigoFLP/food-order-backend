@@ -45,6 +45,7 @@ export class Address {
 
   @ManyToOne(() => Customer, (customer) => customer.addresses, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   customer: Customer;
 

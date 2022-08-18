@@ -101,6 +101,18 @@ export class AuthController {
     const currentUser = await this.userService.findOne(user.sub);
 
     const timestamp = new Date(Date.now());
+    console.log('timestamp: ', timestamp.getSeconds());
+    console.log(
+      'timestamp: ',
+      currentUser.lastConfirmationEmailSent.getSeconds(),
+    );
+
+    console.log(
+      'es 30: ',
+      timestamp.getSeconds() -
+        currentUser.lastConfirmationEmailSent.getSeconds() <
+        30,
+    );
 
     if (
       timestamp.getSeconds() -

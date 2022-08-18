@@ -28,19 +28,28 @@ export class CustomersService {
   }
 
   findAll() {
-    return this.customerRepo.find({ relations: ['user'] });
+    return this.customerRepo.find({
+      relations: ['user'],
+      where: { user: { role: 'client' || 'customer' } },
+    });
   }
 
-  findOne(id: number) {
-    const customer = this.customerRepo.findOne(id);
+  async findOne(id: number) {
+    const customer = await this.customerRepo.findOne(id, {
+      relations: ['user'],
+      where: { user: { role: 'customer' } },
+    });
     if (!customer) {
       throw new NotFoundException(`customer doesn't exist`);
     }
     return this.customerRepo.findOne(id);
   }
 
-  update(id: number, data: UpdateCustomerDto) {
-    return '';
+  async update(id: number, data: UpdateCustomerDto) {
+    const customer = await this.findOne(id);
+
+    const updatedCustomer = this.customerRepo.merge(customer, data);
+    return this.customerRepo.save(updatedCustomer);
   }
 
   remove(id: number) {

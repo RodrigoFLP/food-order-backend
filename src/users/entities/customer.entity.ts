@@ -42,10 +42,13 @@ export class Customer {
   @Column({ type: 'boolean', default: 'false' })
   receiveAds: boolean;
 
-  @OneToOne(() => User, (user) => user.customer, { nullable: true })
+  @OneToOne(() => User, (user) => user.customer, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   user: User;
 
-  @OneToMany(() => Address, (address) => address.customer, {})
+  @OneToMany(() => Address, (address) => address.customer)
   addresses: Address[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.address)

@@ -41,7 +41,10 @@ export class User {
   @Column({ type: 'timestamptz', nullable: true })
   lastLogin: Date;
 
-  @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
+  @OneToOne(() => Customer, (customer) => customer.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   customer: Customer;
 

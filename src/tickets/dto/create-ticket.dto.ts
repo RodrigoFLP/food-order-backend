@@ -28,6 +28,9 @@ export class CreateTicketDto {
   @IsEnum(['delivery', 'pickup'])
   orderType: string;
 
+  @IsEnum(['wompi', 'inplace'])
+  paymentType: string;
+
   @IsDateString()
   @IsOptional()
   scheduledDate?: Date;

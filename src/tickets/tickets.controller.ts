@@ -58,12 +58,16 @@ export class TicketsController {
 
     const ticket = await this.ticketsService.create(createTicketDto, id);
 
-    const paymentLink = await this.wompiService.createPaymentLink(
-      ticket.id,
-      ticket.totalAmount,
-    );
+    if (ticket.paymentType === 'wompi') {
+      const paymentLink = await this.wompiService.createPaymentLink(
+        ticket.id,
+        ticket.totalAmount,
+      );
 
-    return paymentLink;
+      return paymentLink;
+    }
+
+    return { orderId: ticket.id };
   }
 
   @Post('calculate')

@@ -51,6 +51,14 @@ export class Ticket {
   // })
   // status: string;
 
+  @Column({
+    type: 'varchar',
+    length: 255,
+    enum: ['wompi', 'inplace'],
+    nullable: true,
+  })
+  paymentType: string;
+
   @OneToOne(() => Status)
   @JoinColumn()
   status: Status;
@@ -64,13 +72,18 @@ export class Ticket {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => Address, (address) => address.tickets, { nullable: true })
+  @ManyToOne(() => Address, (address) => address.tickets, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   address: Address;
 
   @ManyToOne(() => Store, (store) => store.tickets)
   store: Store;
 
-  @ManyToOne(() => Customer, (customer) => customer.tickets)
+  @ManyToOne(() => Customer, (customer) => customer.tickets, {
+    onDelete: 'SET NULL',
+  })
   customer: Customer;
 
   @OneToMany(() => TicketItem, (ticketItem) => ticketItem.ticket, {

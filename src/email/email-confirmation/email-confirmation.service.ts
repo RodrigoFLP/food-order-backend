@@ -42,6 +42,30 @@ export class EmailConfirmationService {
     });
   }
 
+  public async sendResetPasswordLink(email: string) {
+    const payload: VerificationTokenPayload = { email };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+
+    const url = `${this.configService.get(
+      'RESET_PASSWORD_URL',
+    )}?token=${token}`;
+
+    return this.emailService.sendMail({
+      from: 'Panchos Villa <soporte@panchos.com.sv>',
+      to: email,
+      subject: 'Restablece tu contraseña',
+      template: 'reset',
+      context: {
+        link: url,
+      },
+    });
+  }
+
   public async confirmEmail(email: string) {
     const user = await this.usersService.findByEmail(email);
     if (user.isEmailConfirmed) {
