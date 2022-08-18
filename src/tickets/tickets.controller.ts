@@ -98,14 +98,16 @@ export class TicketsController {
       await this.ticketsService.confirmPayment(id);
     }
 
-    if (hash !== wompiHash) {
-      const { isReal, isSuccess } = await this.wompiService.isOrderReal(id);
+    // Remove comment on production
+    // if (hash !== wompiHash) {
+    //   const { isReal, isSuccess } = await this.wompiService.isOrderReal(id);
 
-      if (isSuccess && isReal) {
-        await this.ticketsService.confirmPayment(id);
-      }
-    }
+    //   if (isSuccess && isReal) {
+    //     await this.ticketsService.confirmPayment(id);
+    //   }
+    // }
 
+    // Comment on production
     this.ticketsService.confirmPayment(id);
 
     return 'Payment succesfull';
