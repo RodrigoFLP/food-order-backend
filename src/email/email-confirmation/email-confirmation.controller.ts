@@ -16,7 +16,6 @@ export class EmailConfirmationController {
 
   // @Get()
   // async confirm(@Query('token') token: string) {
-  //   console.log(token);
   //   const email = await this.emailConfirmationService.decodeConfirmationToken(
   //     token,
   //   );
@@ -27,7 +26,6 @@ export class EmailConfirmationController {
 
   @Post('confirm')
   async confirm(@Body() confirmationData: any) {
-    console.log(confirmationData);
     const email = await this.emailConfirmationService.decodeConfirmationToken(
       confirmationData.token,
     );

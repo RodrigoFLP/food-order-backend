@@ -37,7 +37,6 @@ export class ProductsController {
     @Query('take') take: number,
     @Query('skip') skip: number,
   ) {
-    console.log(keyword, take, skip);
     if (!keyword) {
       return [];
     }
@@ -47,7 +46,6 @@ export class ProductsController {
       take,
       skip,
     );
-    console.log(products);
 
     return products;
   }

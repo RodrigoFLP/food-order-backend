@@ -1,6 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor,
+  ConflictException,
   Controller,
   Get,
   Post,
@@ -17,10 +18,11 @@ import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { PayloadToken } from './models/token.model';
-import { Public } from './decorators/public.decorator';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationService } from '../email/email-confirmation/email-confirmation.service';
 import { TrimPipe } from '../pipes/trim-pipe';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -95,15 +97,32 @@ export class AuthController {
     console.log('hola');
 
     const user = request.user as PayloadToken;
-    const { email, isEmailConfirmed } = await this.userService.findOne(
-      user.sub,
-    );
 
-    if (isEmailConfirmed) {
+    const currentUser = await this.userService.findOne(user.sub);
+
+    const timestamp = new Date(Date.now());
+
+    if (
+      timestamp.getSeconds() -
+        currentUser.lastConfirmationEmailSent.getSeconds() <
+      30
+    ) {
+      throw new ConflictException(
+        'Espera al menos 30 segundos para volver a intentar',
+      );
+    }
+
+    if (currentUser.isEmailConfirmed) {
       throw new UnauthorizedException('El email ya ha sido confirmado');
     }
 
-    return this.emailConfirmationService.sendVerificationLink(email);
+    currentUser.lastConfirmationEmailSent = new Date(Date.now());
+
+    await this.userService.saveUser(currentUser);
+
+    return this.emailConfirmationService.sendVerificationLink(
+      currentUser.email,
+    );
   }
 
   @Get('logout')

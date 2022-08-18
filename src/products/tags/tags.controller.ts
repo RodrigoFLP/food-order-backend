@@ -29,7 +29,6 @@ export class TagsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Post()
   create(@Body() data: CreateTagDto) {
-    console.log(data);
     return this.tagsService.create(data);
   }
 

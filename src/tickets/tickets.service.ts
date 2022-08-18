@@ -67,8 +67,6 @@ export class TicketsService {
       newTicketItem.ticket = newTicket;
       newTicketItem.tags = serializedItem.tags;
 
-      console.log(newTicketItem.tags);
-
       const portion = product.portions.find(
         (portion) => portion.name === item.portion.name,
       );
@@ -157,10 +155,6 @@ export class TicketsService {
   async confirmPayment(id: string) {
     const ticket = await this.findOne(id);
 
-    console.log('Ticket: ', ticket);
-
-    console.log('Llega acá: ', new Date(Date.now()));
-
     ticket.status.orderPaid = new Date(Date.now());
 
     const updated = await this.statusService.update(
@@ -185,16 +179,12 @@ export class TicketsService {
     let total = 0;
     const ticketItems = [];
 
-    console.log(data);
-
     // add ticketItems and bind each one to ticket
     for await (const item of data.ticketItems) {
       const serializedItem = {
         ...item,
         tags: item.tagsGroups.reduce((acc, val) => acc.concat(val.tags), []),
       };
-
-      console.log(serializedItem);
 
       // this.ticketItemsRepo.create(serializedItem);
 

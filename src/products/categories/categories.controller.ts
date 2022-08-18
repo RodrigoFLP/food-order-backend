@@ -29,7 +29,6 @@ export class CategoriesController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Post()
   create(@Body() data: CreateCategoryDto) {
-    console.log(data);
     return this.categoriesService.create(data);
   }
 

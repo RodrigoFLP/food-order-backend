@@ -4,11 +4,6 @@ import config from '../../config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigType } from '@nestjs/config';
 
-// client.query('SELECT * FROM tasks', (err, res) => {
-//   console.error(err);
-//   console.log(res.rows);
-// });
-
 @Global()
 @Module({
   imports: [

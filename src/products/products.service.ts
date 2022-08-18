@@ -47,7 +47,6 @@ export class ProductsService {
       relations: ['categories', 'tagsCategories'],
     });
     if (!product) {
-      console.log('not found');
       throw new NotFoundException(`Product with id ${id} doesn't exist`);
     }
 

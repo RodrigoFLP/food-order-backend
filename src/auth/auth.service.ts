@@ -40,13 +40,9 @@ export class AuthService {
       throw new NotFoundException(`user ${email} doesn't exist`);
     }
 
-    console.log(user.role);
-
     if (user.role !== 'admin' && user.role !== 'super-admin') {
       throw new ForbiddenException('Invalid admin');
     }
-
-    console.log(email, user);
 
     const isMatch = await bcrypt.compare(password, user.password);
 

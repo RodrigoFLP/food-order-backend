@@ -12,7 +12,6 @@ export class PaymentsController {
   // @Get()
   // async createToken() {
   //   const res = await this.paymentsService.createOrRefreshAccessToken();
-  //   console.log(res);
   // }
 
   @Get('wompi')

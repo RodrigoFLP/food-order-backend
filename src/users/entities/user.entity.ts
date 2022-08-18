@@ -47,4 +47,11 @@ export class User {
 
   @Column({ default: false })
   isEmailConfirmed: boolean;
+
+  @Column({
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
+  lastConfirmationEmailSent: Date;
 }

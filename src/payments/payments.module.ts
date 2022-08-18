@@ -13,7 +13,6 @@ import { WompiService } from './wompi/wompi.service';
       provide: 'WOMPI_ACCESS_TOKEN',
       useFactory: async (paymentsService: PaymentsService) => {
         const token = await paymentsService.createOrRefreshAccessToken();
-        console.log(token);
         return token;
       },
       inject: [PaymentsService],

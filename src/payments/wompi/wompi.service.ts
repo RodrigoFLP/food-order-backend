@@ -63,7 +63,6 @@ export class WompiService {
   }
 
   async getOrders(from: string, to: string) {
-    console.log('corre');
     const response = await lastValueFrom(
       this.httpService
         .get(
@@ -76,7 +75,6 @@ export class WompiService {
         )
         .pipe(map((res) => res.data)),
     );
-    console.log(response);
     return { ...response };
   }
 }
