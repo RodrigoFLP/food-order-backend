@@ -77,7 +77,7 @@ export class TicketsController {
   async confirmPayment(
     @Query('id') id: string,
     @Body() wompiWebhookBody: WompiWebhookBody,
-    @Headers() wompiHash,
+    @Headers('wompi_hash') wompiHash,
   ) {
     console.log('wompiWebhoookBody: ', wompiWebhookBody);
     console.log('wompiHash: ', wompiHash);
@@ -94,15 +94,19 @@ export class TicketsController {
 
     console.log('hash: ', hash);
 
+    if (hash === wompiHash) {
+      await this.ticketsService.confirmPayment(id);
+    }
+
     if (hash !== wompiHash) {
       const { isReal, isSuccess } = await this.wompiService.isOrderReal(id);
 
       if (isSuccess && isReal) {
-        await this.ticketsService.confirmPayment(idTransaccion);
+        await this.ticketsService.confirmPayment(id);
       }
     }
 
-    this.ticketsService.confirmPayment(idTransaccion);
+    this.ticketsService.confirmPayment(id);
 
     return 'Payment succesfull';
   }
