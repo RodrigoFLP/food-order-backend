@@ -37,7 +37,6 @@ export class CustomersService {
   async findOne(id: number) {
     const customer = await this.customerRepo.findOne(id, {
       relations: ['user'],
-      where: { user: { role: 'customer' } },
     });
     if (!customer) {
       throw new NotFoundException(`customer doesn't exist`);

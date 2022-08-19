@@ -46,6 +46,14 @@ export class TagsGroups {
   @Min(0)
   quantity: number;
 
+  @IsNumber()
+  @IsOptional()
+  max: number;
+
+  @IsNumber()
+  @IsOptional()
+  min: number;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Tags)

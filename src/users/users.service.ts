@@ -24,7 +24,7 @@ export class UsersService {
     const existsEmail = !!(await this.findByEmail(data.email));
 
     if (existsEmail) {
-      throw new NotAcceptableException('Email already exists');
+      throw new NotAcceptableException('El correo se encuentra en uso');
     }
 
     const newUser = this.userRepository.create(data);
@@ -36,7 +36,7 @@ export class UsersService {
       newUser.customer = customer;
     }
 
-    newUser.role = 'client';
+    newUser.role = 'customer';
 
     return this.userRepository.save(newUser);
   }
